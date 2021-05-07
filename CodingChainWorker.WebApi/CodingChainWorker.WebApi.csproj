@@ -1,0 +1,52 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+        <DockerDefaultTargetOS>Windows</DockerDefaultTargetOS>
+        <RootNamespace>NeosCodingApi</RootNamespace>
+        <Nullable>enable</Nullable>
+        <GenerateCode>True</GenerateCode>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Content Remove="nswag.json" />
+        <Content Remove="AppData\Templates\**" />
+        <Content Include="AppData\Templates\csharp_template\csharp_template.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.4" />
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="5.0.4" />
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.0.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="5.0.0" />
+        <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="5.0.2" />
+        <PackageReference Include="NSwag.AspNetCore" Version="13.10.8" />
+        <PackageReference Include="NSwag.MSBuild" Version="13.10.8">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.1.1" />
+        <PackageReference Include="ZymLabs.NSwag.FluentValidation" Version="0.4.0" />
+        <PackageReference Include="ZymLabs.NSwag.FluentValidation.AspNetCore" Version="0.4.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\CodingChainWorker.Application\CodingChainWorker.Application.csproj" />
+        <ProjectReference Include="..\CodingChainWorker.Domain\CodingChainWorker.Domain.csproj" />
+        <ProjectReference Include="..\CodingChainWorker.Infrastructure\CodingChainWorker.Infrastructure.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Compile Remove="AppData\Templates\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <EmbeddedResource Remove="AppData\Templates\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Content Remove="AppData\Templates\**" />
+    </ItemGroup>
+
+</Project>
