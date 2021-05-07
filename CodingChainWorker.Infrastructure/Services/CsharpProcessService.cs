@@ -5,6 +5,7 @@ using System.Text;
 using Application.Contracts.IService;
 using CodingChainApi.Infrastructure.Settings;
 using Domain.TestExecution;
+using Domain.TestExecution.POO;
 
 namespace CodingChainApi.Infrastructure.Services
 {

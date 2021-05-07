@@ -1,6 +1,8 @@
 using System;
+using System;
 using System.Collections.Generic;
 using Domain.TestExecution;
+using Domain.TestExecution.POO;
 using NUnit.Framework;
 
 namespace CodingChainWorker.Domain.Tests
@@ -9,27 +11,25 @@ namespace CodingChainWorker.Domain.Tests
     {
         private ParticipationTestingAggregate _participationTestingAggregate;
 
-        private string GetTestFunctionCode(int order) => @"    
-        public static string MyMethod(string test)
-        {
-            return test;
-        }";
+        private string GetTestFunctionCode(string name,int order, string type = null, string returnType = null , string code = "return test;" ) => $@"    
+        public static {returnType ?? type} {name}{order}({(type == null ? "" : $"{type} test")})
+        {{
+            {code}
+        }}";
         
         private string GetTestOutputGeneratorCode() => @"    
         public static  bool TestOutput(string test)
         {
-            return ""salut"" == test 
+            return ""salut"" == test ;
         }";
         
         private string GetTestInputGeneratorCode() => @"    
         public static string TestGen()
         {
-            return test;
+            return ""salut"";
         }";
 
-        private string GetTestHeaderCode() => @"
-        using System;
-        ";
+        private string GetTestHeaderCode() => @"using System;";
 
         [SetUp]
         public void Setup()
@@ -40,11 +40,17 @@ namespace CodingChainWorker.Domain.Tests
                 GetTestHeaderCode(),
                 new List<Function>()
                 {
-                    new(GetTestFunctionCode(1), 1)
+                    new(GetTestFunctionCode("test",2, "string"), 2),
+                    new(GetTestFunctionCode("test",1, "string"), 1)
                 },
                 new List<Test>()
                 {
-                    new(GetTestInputGeneratorCode(), GetTestOutputGeneratorCode())
+                    new Test(
+                        GetTestFunctionCode("test",1, "string", "bool", @"return ""test""==test;"),
+                        GetTestFunctionCode("test",1, null, "string", @"return ""test"";")),
+                    new Test(
+                        GetTestFunctionCode("test",1, "string", "bool", @"return ""test""==test;"),
+                        GetTestFunctionCode("test",1, null, "string", @"return ""test"";"))
                 }
             );
         }
@@ -55,6 +61,5 @@ namespace CodingChainWorker.Domain.Tests
             var res = _participationTestingAggregate.GetExecutableCode();
             Assert.Pass();
         }
-        
     }
 }

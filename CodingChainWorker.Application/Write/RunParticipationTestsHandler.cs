@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Application.Contracts.IService;
 using Domain.TestExecution;
+using Domain.TestExecution.POO;
 using MediatR;
 
 namespace Application.Write
