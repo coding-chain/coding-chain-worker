@@ -17,4 +17,8 @@
       <ProjectReference Include="..\CodingChainWorker.Infrastructure\CodingChainWorker.Infrastructure.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="AppData\Templates\csharp_template" />
+    </ItemGroup>
+
 </Project>

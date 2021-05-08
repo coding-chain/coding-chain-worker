@@ -6,6 +6,7 @@ using CodingChainApi.Infrastructure.Settings;
 using Domain.Contracts;
 using Domain.TestExecution;
 using Domain.TestExecution.OOP.CSharp;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
@@ -19,7 +20,7 @@ namespace CodingChainWorker.Infrastructure.Tests
         {
         }
     }
-    
+
     public class FakeParticipationTestingAggregate : CSharpParticipationTestingAggregate
     {
         public string ExecutionCode { get; set; }
@@ -45,21 +46,31 @@ namespace CodingChainWorker.Infrastructure.Tests
         {
             _appDataSettings = new AppDataSettings()
             {
-                BasePath = "",
-                TemplatesPath = ""
+                BasePath = "../../../AppData",
+                TemplatesPath = "Templates"
             };
             _cSharpExecutionSettings = new CSharpExecutionSettings()
             {
-                TemplatePath = "",
+                TemplatePath = "csharp_template",
                 BaseTestFileName = "Tests"
             };
             _participationTestingAggregate = new FakeParticipationTestingAggregate(
                 new ParticipationId(Guid.NewGuid()),
                 "csharp",
                 "import System;",
-                new List<Function>(),
-                new List<Test>());
-            _processService = new CsharpProcessService(_appDataSettings, _cSharpExecutionSettings, new FakeLogger(null));
+                new List<Function> {new("public static string test1(string test) { return test; }", 0)},
+                new List<Test>
+                {
+                    new("public static bool test1(string test) { return \"test\"==test; }",
+                        "public static string test1() { return \"test\"; }")
+                });
+            var serviceProvider = new ServiceCollection()
+                .AddLogging()
+                .BuildServiceProvider();
+
+            var factory = serviceProvider.GetService<ILoggerFactory>();
+            _processService =
+                new CsharpProcessService(_appDataSettings, _cSharpExecutionSettings, new FakeLogger(factory));
         }
 
         [Test]
