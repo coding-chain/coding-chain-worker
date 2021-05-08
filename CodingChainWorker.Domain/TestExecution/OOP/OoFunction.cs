@@ -1,4 +1,4 @@
-namespace Domain.TestExecution
+namespace Domain.TestExecution.OOP
 {
     public record OoFunction : Function
     {

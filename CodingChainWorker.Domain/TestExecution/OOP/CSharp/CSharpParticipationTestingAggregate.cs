@@ -1,19 +1,16 @@
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
 
-namespace Domain.TestExecution.POO
+namespace Domain.TestExecution.OOP.CSharp
 {
     public  class CSharpParticipationTestingAggregate : ParticipationTestingAggregate
     {
-        private IPooCodeBuilder _codeBuilder;
+        private IPooCodeGenerator _codeGenerator;
 
         public CSharpParticipationTestingAggregate(ParticipationId id, string language, string headerCode,
             IList<Function> functions, IList<Test> tests) : base(id, language, headerCode)
         {
-            _codeBuilder = new CsharpCodeBuilder(tests, functions, new CsharpCodeAnalyzer(), HeaderCode);
+            _codeGenerator = new CsharpCodeGenerator(tests, functions, new CsharpCodeAnalyzer(), HeaderCode);
         }
-        public override string GetExecutableCode() => _codeBuilder.GetExecutableCode();
+        public override string GetExecutableCode() => _codeGenerator.GetExecutableCode();
     }
 }

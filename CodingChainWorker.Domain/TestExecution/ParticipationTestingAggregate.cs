@@ -7,10 +7,8 @@ namespace Domain.TestExecution
 {
     public abstract class ParticipationTestingAggregate : Aggregate<ParticipationId>
     {
-
-        public string Language { get; protected set; }
-        public string HeaderCode { get; protected set; }
-
+        public string Language { get;  }
+        public string HeaderCode { get; }
 
         public abstract string GetExecutableCode();
 

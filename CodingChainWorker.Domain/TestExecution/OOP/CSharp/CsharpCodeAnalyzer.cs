@@ -1,10 +1,10 @@
 using System.Text.RegularExpressions;
 
-namespace Domain.TestExecution.POO
+namespace Domain.TestExecution.OOP.CSharp
 {
-    public class CsharpCodeAnalyzer: IPOOCodeAnalyzer
+    public class CsharpCodeAnalyzer: IPooCodeAnalyzer
     {
-        public string FindMethodName(string code)
+        public string? FindMethodName(string code)
         {
             var match = Regex.Match(code, @"{[\s\S]*}|=>");
             var openBracketCnt = 0;
@@ -27,7 +27,8 @@ namespace Domain.TestExecution.POO
                 if (openBracketCnt == 0 && hasChanged) break;
             }
             code = code[..i];
-            return Regex.Match(code, @"\b(\w+)$").Value;
+            var res = Regex.Match(code, @"\b(\w+)$").Value;
+            return res.Length > 0 ? res : null;
         }
     }
 }

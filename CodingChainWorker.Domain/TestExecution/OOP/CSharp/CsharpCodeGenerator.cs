@@ -1,18 +1,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Domain.Exceptions;
 
-namespace Domain.TestExecution.POO
+namespace Domain.TestExecution.OOP.CSharp
 {
-    public class CsharpCodeBuilder : IPooCodeBuilder
+    public class CsharpCodeGenerator : IPooCodeGenerator
     {
         private List<OoTest> _tests;
         private SortedSet<OoFunction> _functions;
-        private IPOOCodeAnalyzer _analyzer;
+        private IPooCodeAnalyzer _analyzer;
         private string _headerCode;
 
 
-        public CsharpCodeBuilder(IList<Test> tests, IList<Function> functions, IPOOCodeAnalyzer analyzer,
+        public CsharpCodeGenerator(IList<Test> tests, IList<Function> functions, IPooCodeAnalyzer analyzer,
             string headerCode)
         {
             _analyzer = analyzer;
@@ -34,18 +35,23 @@ namespace Domain.TestExecution.POO
         private OoFunction ToOoFunction(Function func)
         {
             var className = GetClassName("Function", func.Id);
-            return new OoFunction(ToStaticClass(func.CleanedCode, className), func.Id,
-                _analyzer.FindMethodName(func.CleanedCode), className);
+            var funcName = _analyzer.FindMethodName(func.CleanedCode) ??
+                           throw new DomainException($"Cannot find method name for function {func}");
+            return new OoFunction(ToStaticClass(func.CleanedCode, className), func.Id, funcName, className);
         }
 
         private OoTest ToOoTest(Test test, int order)
         {
-            var outputClassName = GetClassName("OutputValidator", order);
-            var inputClassName = GetClassName("InputGenerator", order);
-            var inFunc = new OoFunction(ToStaticClass(test.CleanedInputGenerator, inputClassName), order,
-                _analyzer.FindMethodName(test.InputGenerator), inputClassName);
-            var outFunc = new OoFunction(ToStaticClass(test.CleanedOutputValidator, outputClassName), order,
-                _analyzer.FindMethodName(test.OutputValidator), outputClassName);
+            var outClassName = GetClassName("OutputValidator", order);
+            var inClassName = GetClassName("InputGenerator", order);
+            var inMethodName = _analyzer.FindMethodName(test.InputGenerator) 
+                               ?? throw new DomainException($"Cannot find method name for input generator on test {test}") ;
+            var outMethodName = _analyzer.FindMethodName(test.OutputValidator)
+                                ?? throw new DomainException($"Cannot find method name for output validator on test {test}") ;
+            var inFunc = new OoFunction(ToStaticClass(test.CleanedInputGenerator, inClassName), order,
+                inMethodName, inClassName);
+            var outFunc = new OoFunction(ToStaticClass(test.CleanedOutputValidator, outClassName), order,
+                outMethodName, outClassName);
             return new OoTest(inFunc, outFunc);
         }
 

@@ -12,7 +12,6 @@ namespace Domain.TestExecution
             CleanedCode = Regex.Replace(code, @"\s+", " ");
         }
 
-
         public string CleanedCode { get; init; }
         public string Code { get; }
         public int Id { get; }
@@ -27,6 +26,11 @@ namespace Domain.TestExecution
         public int CompareTo(Function? other)
         {
             return Id.CompareTo(other?.Id);
+        }
+
+        public override string ToString()
+        {
+            return $"{nameof(CleanedCode)}: {CleanedCode}, {nameof(Code)}: {Code}, {nameof(Id)}: {Id}";
         }
     }
 }

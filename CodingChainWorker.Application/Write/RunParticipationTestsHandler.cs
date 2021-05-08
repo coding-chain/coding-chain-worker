@@ -5,7 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Application.Contracts.IService;
 using Domain.TestExecution;
-using Domain.TestExecution.POO;
+using Domain.TestExecution.OOP.CSharp;
 using MediatR;
 
 namespace Application.Write
@@ -35,7 +35,8 @@ namespace Application.Write
                 request.HeaderCode,
                 request.Functions.Select(f => new Function(f.Code, f.Order)).ToList(),
                 request.Tests.Select(t => new Test(t.OutputValidator, t.InputGenerator)).ToList());
-            _processService.ExecuteParticipationCode(execution);
+            var handler = _processService.WriteAndExecuteParticipation(execution);
+            handler.ProcessEnded += (o, e) => Console.WriteLine($"{e.Error},{e.Output}");
             return Task.FromResult(execution.Id.ToString());
         }
     }

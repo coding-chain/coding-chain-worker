@@ -1,14 +1,14 @@
 using System;
 using System.IO;
 using Application.Contracts.IService;
+using Application.Contracts.Processes;
 using Domain.TestExecution;
 
-namespace CodingChainApi.Infrastructure.Services
+namespace CodingChainApi.Infrastructure.Services.Processes
 {
     public abstract class ProcessService<T> : IProcessService<T>, IDisposable where T : ParticipationTestingAggregate
     {
-        
-        abstract protected string TemplatePath { get;  }
+        protected abstract string TemplatePath { get;  }
         protected abstract string TestsFilePath { get; }
         private StreamWriter? _fileStream;
         protected StreamWriter FileStream  {
@@ -18,23 +18,25 @@ namespace CodingChainApi.Infrastructure.Services
                 return _fileStream;
             }
         }
-
-        protected ProcessService()
-        {
-            
-        }
+        
         public void Dispose()
         {
             _fileStream?.Dispose();
         }
-        public abstract void ExecuteParticipationCode(T participation);
 
-        public string  WriteParticipation(T participation)
+        public IProcessEndHandler WriteAndExecuteParticipation(T participation)
+        {
+            WriteParticipation(participation);
+            return ExecuteParticipation(participation);
+        }
+        public abstract IProcessEndHandler ExecuteParticipation(T participation);
+
+        public void WriteParticipation(T participation)
         {
             FileStream.WriteLine(participation.GetExecutableCode());
-            FileStream.Close();
+            _fileStream?.Close();
             _fileStream = null;
-            return TestsFilePath;
         }
+
     }
 }
