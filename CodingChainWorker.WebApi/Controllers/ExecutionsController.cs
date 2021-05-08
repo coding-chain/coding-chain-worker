@@ -5,9 +5,9 @@ using Application.Write;
 using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using NeosCodingApi.Services;
+using CodingChainApi.Services;
 
-namespace NeosCodingApi.Controllers
+namespace CodingChainApi.Controllers
 {
     public class ExecutionsController : ApiControllerBase
     {

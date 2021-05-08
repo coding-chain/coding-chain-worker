@@ -13,14 +13,14 @@ using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using NeosCodingApi.Controllers;
-using NeosCodingApi.Services;
+using CodingChainApi.Controllers;
+using CodingChainApi.Services;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using ZymLabs.NSwag.FluentValidation;
 using DependencyInjection = Application.DependencyInjection;
 
-namespace NeosCodingApi
+namespace CodingChainApi
 {
     public class Startup
     {
