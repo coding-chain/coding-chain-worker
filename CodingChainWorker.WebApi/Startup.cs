@@ -15,6 +15,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using CodingChainApi.Controllers;
 using CodingChainApi.Services;
+using CodingChainApi.Services.Code;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using ZymLabs.NSwag.FluentValidation;
@@ -45,6 +46,10 @@ namespace CodingChainApi
             services.AddApplication();
             services.AddScoped<IPropertyCheckerService, PropertyCheckerService>();
             services.AddHttpContextAccessor();
+            
+            //RabbitMQ
+            services.AddHostedService<CodeExecutionService>();
+            //
 
 
             services.AddSignalR();
