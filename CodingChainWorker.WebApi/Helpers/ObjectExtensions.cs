@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Dynamic;
 using System.Reflection;
-using ReflectionHelper = NeosCodingApi.Helpers.ReflectionHelper;
+using ReflectionHelper = CodingChainApi.Helpers.ReflectionHelper;
 
-namespace NeosCodingApi.Helpers
+namespace CodingChainApi.Helpers
 {
     public static class ObjectExtensions
     {
