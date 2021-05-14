@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 using Application.Contracts.IService;
-using CodingChainApi.Infrastructure.MessageBroker.RabbitMQ;
+using CodingChainApi.Infrastructure.MessageBroker;
 using CodingChainApi.Infrastructure.Services.Processes;
 using CodingChainApi.Infrastructure.Settings;
 using Domain.TestExecution.OOP.CSharp;

@@ -42,14 +42,10 @@ namespace Application.Write
                 request.HeaderCode,
                 request.Functions.Select(f => new Function(f.Code, f.Order)).ToList(),
                 request.Tests.Select(t => new Test(t.OutputValidator, t.InputGenerator)).ToList());
+            // TODO Return async task not handler
             var handler = _processService.WriteAndExecuteParticipation(execution);
             var result = new CodeProcessResponse(request.ParticipationId, handler.Error, handler.Output);
-            /** handler.ProcessEnded += (o, e) =>
-             {
-                 result.Errors = e.Error;
-                 result.Output = e.Output;
-                 _executionResponseService.Dispatch(result);
-             };**/
+            
             _executionResponseService.Dispatch(result);
 
             return Task.FromResult(JsonConvert.SerializeObject(result));

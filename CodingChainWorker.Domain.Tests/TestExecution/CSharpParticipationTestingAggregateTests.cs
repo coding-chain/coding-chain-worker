@@ -1,12 +1,11 @@
 using System;
-using System;
 using System.Collections.Generic;
 using CodingChainWorker.Domain.Tests.Helpers;
 using Domain.TestExecution;
 using Domain.TestExecution.OOP.CSharp;
 using NUnit.Framework;
 
-namespace CodingChainWorker.Domain.Tests
+namespace CodingChainWorker.Domain.Tests.TestExecution
 {
     public class CSharpParticipationTestingAggregateTests
     {

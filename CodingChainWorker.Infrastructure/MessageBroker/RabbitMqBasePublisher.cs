@@ -5,9 +5,9 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
 
-namespace CodingChainApi.Infrastructure.MessageBroker.RabbitMQ
+namespace CodingChainApi.Infrastructure.MessageBroker
 {
-    public class RabbitMqBasePublisher : IRabbitMqPublisher
+    public sealed class RabbitMqBasePublisher : IRabbitMqPublisher
     {
         private readonly IModel? _channel;
 
@@ -37,9 +37,9 @@ namespace CodingChainApi.Infrastructure.MessageBroker.RabbitMQ
             _logger = logger;
         }
 
-        public virtual void PushMessage(string queueName, object message)
+        public void PushMessage(string queueName, object message)
         {
-            _logger.LogInformation($"PushMessage,queueName:{queueName}");
+            _logger.LogInformation("PushMessage,queueName:{QueueName}", queueName);
             _channel?.QueueDeclare(queue: queueName, durable: false, exclusive: false, autoDelete: true,
                 arguments: null);
 

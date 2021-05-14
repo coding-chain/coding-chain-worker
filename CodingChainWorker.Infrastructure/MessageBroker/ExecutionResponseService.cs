@@ -2,7 +2,7 @@ using Application.Contracts.IService;
 using Application.Read.Code.Execution;
 using CodingChainApi.Infrastructure.Settings;
 
-namespace CodingChainApi.Infrastructure.MessageBroker.RabbitMQ
+namespace CodingChainApi.Infrastructure.MessageBroker
 {
     public class ExecutionResponseService : IExecutionResponseService
     {

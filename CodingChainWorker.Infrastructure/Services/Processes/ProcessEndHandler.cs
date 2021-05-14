@@ -7,8 +7,8 @@ namespace CodingChainApi.Infrastructure.Services.Processes
     {
         private string? _error;
         private string? _output;
-        public string Output => _output;
-        public string Error => _error;
+        public string? Output => _output ;
+        public string? Error => _error;
         public event EventHandler<ProcessEndedEventArgs>? ProcessEnded;
 
         public string AddError(string? newError)

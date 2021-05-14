@@ -1,20 +1,20 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
-	<s:String x:Key="/Default/Environment/Hierarchy/Build/BuildTool/DotNetCliExePath/@EntryValue">/usr/share/dotnet/dotnet</s:String>
-	<s:String x:Key="/Default/Environment/Highlighting/HighlightingSourceSnapshotLocation/@EntryValue">/home/sbailleul/.cache/JetBrains/Rider2021.1/resharper-host/temp/Rider/vAny/CoverageData/_CodingChainWorker.-108202388/Snapshot/snapshot.utdcvr</s:String>
+	<s:String x:Key="/Default/Environment/Hierarchy/Build/BuildTool/DotNetCliExePath/@EntryValue">C:\Program Files\dotnet\dotnet.exe</s:String>
 	
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=ba263279_002D07dc_002D4940_002D90c3_002D0fd3c822d7f3/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="Test1" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
-  &lt;TestAncestor&gt;
-    &lt;TestId&gt;NUnit3x::B75CBBDD-CB44-46D2-B4EE-33A9227C1BAF::net5.0::CodingChainWorker.Domain.Tests.CSharpParticipationTestingAggregateTests.Test1&lt;/TestId&gt;
-    &lt;TestId&gt;NUnit3x::B75CBBDD-CB44-46D2-B4EE-33A9227C1BAF::net5.0::CodingChainWorker.Domain.Tests.CSharpCodeAnalyzerTests.find_method_name_should_work&lt;/TestId&gt;
-    &lt;TestId&gt;NUnit3x::B75CBBDD-CB44-46D2-B4EE-33A9227C1BAF::net5.0::CodingChainWorker.Domain.Tests.CSharpCodeAnalyzerTests.find_method_name_should_work_on_method&lt;/TestId&gt;
-    &lt;TestId&gt;NUnit3x::B75CBBDD-CB44-46D2-B4EE-33A9227C1BAF::net5.0::CodingChainWorker.Domain.Tests.CSharpCodeAnalyzerTests.find_method_name_should_work_on_method_with_tuples&lt;/TestId&gt;
-    &lt;TestId&gt;NUnit3x::B75CBBDD-CB44-46D2-B4EE-33A9227C1BAF::net5.0::CodingChainWorker.Domain.Tests.CSharpCodeAnalyzerTests.find_method_name_should_return_null_on_mishapped_method&lt;/TestId&gt;
-    &lt;TestId&gt;NUnit3x::B75CBBDD-CB44-46D2-B4EE-33A9227C1BAF::net5.0::CodingChainWorker.Domain.Tests.TestExecution.CSharpCodeGeneratorTests.should_throw_on_function_without_method_name&lt;/TestId&gt;
-    &lt;TestId&gt;NUnit3x::B75CBBDD-CB44-46D2-B4EE-33A9227C1BAF::net5.0::CodingChainWorker.Domain.Tests.TestExecution.CSharpCodeGeneratorTests.should_throw_on_test_without_input_method_name&lt;/TestId&gt;
-    &lt;TestId&gt;NUnit3x::B75CBBDD-CB44-46D2-B4EE-33A9227C1BAF::net5.0::CodingChainWorker.Domain.Tests.TestExecution.CSharpCodeGeneratorTests.should_throw_on_test_without_output_method_name&lt;/TestId&gt;
-    &lt;TestId&gt;NUnit3x::4C8A9CCC-6C49-44F5-925E-2C4CE7F5E1C9::net5.0::CodingChainWorker.Infrastructure.Tests.CsharpProcessServiceTests.Test1&lt;/TestId&gt;
-    &lt;TestId&gt;NUnit3x::B75CBBDD-CB44-46D2-B4EE-33A9227C1BAF::net5.0::CodingChainWorker.Domain.Tests.CSharpParticipationTestingAggregateTests.get_executable_code_should_works&lt;/TestId&gt;
-  &lt;/TestAncestor&gt;
+	
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=ba263279_002D07dc_002D4940_002D90c3_002D0fd3c822d7f3/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="Test1" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::B75CBBDD-CB44-46D2-B4EE-33A9227C1BAF::net5.0::CodingChainWorker.Domain.Tests.CSharpParticipationTestingAggregateTests.Test1&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::B75CBBDD-CB44-46D2-B4EE-33A9227C1BAF::net5.0::CodingChainWorker.Domain.Tests.CSharpCodeAnalyzerTests.find_method_name_should_work&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::B75CBBDD-CB44-46D2-B4EE-33A9227C1BAF::net5.0::CodingChainWorker.Domain.Tests.CSharpCodeAnalyzerTests.find_method_name_should_work_on_method&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::B75CBBDD-CB44-46D2-B4EE-33A9227C1BAF::net5.0::CodingChainWorker.Domain.Tests.CSharpCodeAnalyzerTests.find_method_name_should_work_on_method_with_tuples&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::B75CBBDD-CB44-46D2-B4EE-33A9227C1BAF::net5.0::CodingChainWorker.Domain.Tests.CSharpCodeAnalyzerTests.find_method_name_should_return_null_on_mishapped_method&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::B75CBBDD-CB44-46D2-B4EE-33A9227C1BAF::net5.0::CodingChainWorker.Domain.Tests.TestExecution.CSharpCodeGeneratorTests.should_throw_on_function_without_method_name&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::B75CBBDD-CB44-46D2-B4EE-33A9227C1BAF::net5.0::CodingChainWorker.Domain.Tests.TestExecution.CSharpCodeGeneratorTests.should_throw_on_test_without_input_method_name&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::B75CBBDD-CB44-46D2-B4EE-33A9227C1BAF::net5.0::CodingChainWorker.Domain.Tests.TestExecution.CSharpCodeGeneratorTests.should_throw_on_test_without_output_method_name&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::4C8A9CCC-6C49-44F5-925E-2C4CE7F5E1C9::net5.0::CodingChainWorker.Infrastructure.Tests.CsharpProcessServiceTests.Test1&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::B75CBBDD-CB44-46D2-B4EE-33A9227C1BAF::net5.0::CodingChainWorker.Domain.Tests.CSharpParticipationTestingAggregateTests.get_executable_code_should_works&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
 	
 	</wpf:ResourceDictionary>

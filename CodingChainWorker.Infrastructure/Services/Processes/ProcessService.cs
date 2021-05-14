@@ -8,7 +8,6 @@ namespace CodingChainApi.Infrastructure.Services.Processes
 {
     public abstract class ProcessService<T> : IProcessService<T>, IDisposable where T : ParticipationTestingAggregate
     {
-        protected abstract string TemplatePath { get;  }
         protected abstract string TestsFilePath { get; }
         private StreamWriter? _fileStream;
         protected StreamWriter FileStream  {

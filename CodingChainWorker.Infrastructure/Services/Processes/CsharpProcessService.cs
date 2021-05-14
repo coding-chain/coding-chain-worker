@@ -15,7 +15,7 @@ namespace CodingChainApi.Infrastructure.Services.Processes
         private readonly ICSharpExecutionSettings _cSharpExecutionSettings;
         private readonly ILogger<CsharpProcessService> _logger;
 
-        protected override string TemplatePath =>Path.GetFullPath(Path.Combine(_appDataSettings.BasePath,
+        private  string TemplatePath =>Path.GetFullPath(Path.Combine(_appDataSettings.BasePath,
             _appDataSettings.TemplatesPath,
             _cSharpExecutionSettings.TemplatePath));
 
