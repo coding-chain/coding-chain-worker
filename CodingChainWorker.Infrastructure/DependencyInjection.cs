@@ -1,9 +1,8 @@
 ﻿using System.Reflection;
 using Application.Contracts.IService;
-using CodingChainApi.Infrastructure.Services;
+using CodingChainApi.Infrastructure.MessageBroker.RabbitMQ;
 using CodingChainApi.Infrastructure.Services.Processes;
 using CodingChainApi.Infrastructure.Settings;
-using Domain.TestExecution;
 using Domain.TestExecution.OOP.CSharp;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,11 +16,14 @@ namespace CodingChainApi.Infrastructure
             IConfiguration configuration)
         {
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
-            services.AddScoped<IProcessService<CSharpParticipationTestingAggregate>, CsharpProcessService>();
+            services.AddSingleton<IProcessService<CSharpParticipationTestingAggregate>, CsharpProcessService>();
+            services.AddSingleton<IExecutionResponseService, ExecutionResponseService>();
             ConfigureInjectableSettings<IAppDataSettings, AppDataSettings>(services, configuration);
             ConfigureInjectableSettings<ICSharpExecutionSettings, CSharpExecutionSettings>(services, configuration);
+            ConfigureRabbitMqSettings(services, configuration);
             return services;
         }
+
         private static TImplementation ConfigureInjectableSettings<TInterface, TImplementation>(
             IServiceCollection services,
             IConfiguration configuration) where TImplementation : class, TInterface where TInterface : class
@@ -32,6 +34,15 @@ namespace CodingChainApi.Infrastructure
             services.AddSingleton<TInterface>(sp =>
                 sp.GetRequiredService<IOptions<TImplementation>>().Value);
             return settings;
+        }
+
+        private static void ConfigureRabbitMqSettings(IServiceCollection serviceCollection,
+            IConfiguration configuration)
+        {
+            // RabbitMQ
+            serviceCollection.AddSingleton<IRabbitMqPublisher, RabbitMqBasePublisher>();
+            ConfigureInjectableSettings<IRabbitMqSettings, RabbitMqSettings>(serviceCollection, configuration);
+            // End RabbitMQ Configuration
         }
     }
 }

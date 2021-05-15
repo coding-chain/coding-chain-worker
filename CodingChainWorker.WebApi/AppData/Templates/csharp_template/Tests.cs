@@ -1,4 +1,4 @@
-using System;
+import System;
 using NUnit.Framework;
 
              public static class Function1 {

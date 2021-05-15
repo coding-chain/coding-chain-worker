@@ -65,6 +65,8 @@ namespace CodingChainApi.Infrastructure.Services.Processes
             };
             process.Start();
             process.BeginOutputReadLine();
+            process.WaitForExit();
+            
             return handler;
         }
     }
