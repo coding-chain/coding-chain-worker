@@ -16,8 +16,8 @@ namespace CodingChainApi.Infrastructure
             IConfiguration configuration)
         {
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
-            services.AddSingleton<IProcessService<CSharpParticipationTestingAggregate>, CsharpProcessService>();
-            services.AddSingleton<IExecutionResponseService, ExecutionResponseService>();
+            services.AddScoped<IProcessService<CSharpParticipationTestingAggregate>, CsharpProcessService>();
+            services.AddScoped<IExecutionResponseService, ExecutionResponseService>();
             ConfigureInjectableSettings<IAppDataSettings, AppDataSettings>(services, configuration);
             ConfigureInjectableSettings<ICSharpExecutionSettings, CSharpExecutionSettings>(services, configuration);
             ConfigureRabbitMqSettings(services, configuration);

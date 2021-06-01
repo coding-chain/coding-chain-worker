@@ -1,10 +1,9 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.IO;
-using Application.Contracts.Processes;
+using System.Threading.Tasks;
+using Application.Read.Execution;
 using CodingChainApi.Infrastructure.Settings;
 using Domain.TestExecution.OOP.CSharp;
-using MediatR;
 using Microsoft.Extensions.Logging;
 
 namespace CodingChainApi.Infrastructure.Services.Processes
@@ -32,7 +31,8 @@ namespace CodingChainApi.Infrastructure.Services.Processes
             _logger = logger;
         }
 
-        public override IProcessEndHandler ExecuteParticipation(CSharpParticipationTestingAggregate participation)
+        public override async Task<CodeProcessResponse> ExecuteParticipation(
+            CSharpParticipationTestingAggregate participation)
         {
             using var process = new Process
             {
@@ -47,6 +47,7 @@ namespace CodingChainApi.Infrastructure.Services.Processes
                 }
             };
             var handler = new ProcessEndHandler();
+            var processResult = new CodeProcessResponse(participation.Id.Value, null, null);
             process.EnableRaisingEvents = true;
             process.ErrorDataReceived += (o, e) =>
             {
@@ -60,13 +61,12 @@ namespace CodingChainApi.Infrastructure.Services.Processes
             };
             process.Exited += (o, e) =>
             {
-                handler.End();
                 _logger.LogDebug("Process ended");
             };
             process.Start();
             process.BeginOutputReadLine();
-            process.WaitForExit();
-            return handler;
+            await process.WaitForExitAsync();
+            return new CodeProcessResponse(participation.Id.Value, handler.Error, handler.Output);
         }
     }
 }

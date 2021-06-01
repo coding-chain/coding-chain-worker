@@ -1,7 +1,8 @@
 using System;
 using System.IO;
+using System.Threading.Tasks;
 using Application.Contracts.IService;
-using Application.Contracts.Processes;
+using Application.Read.Execution;
 using Domain.TestExecution;
 
 namespace CodingChainApi.Infrastructure.Services.Processes
@@ -23,12 +24,12 @@ namespace CodingChainApi.Infrastructure.Services.Processes
             _fileStream?.Dispose();
         }
 
-        public IProcessEndHandler WriteAndExecuteParticipation(T participation)
+        public Task<CodeProcessResponse> WriteAndExecuteParticipation(T participation)
         {
             WriteParticipation(participation);
             return ExecuteParticipation(participation);
         }
-        public abstract IProcessEndHandler ExecuteParticipation(T participation);
+        public abstract Task<CodeProcessResponse> ExecuteParticipation(T participation);
 
         public void WriteParticipation(T participation)
         {

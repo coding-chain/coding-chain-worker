@@ -1,22 +1,21 @@
-using System;
-using NUnit.Framework;
+
 
              public static class Function1 {
-                 public static string test1(string test) { return test; }
+                 public static int TestFunc3(int test){ return test; }
              }
              public static class InputGenerator0 {
-                 public static string test1() { return "test"; }
+                 public static int InGen(){ return 1; }
              }
 
              public static class OutputValidator0 {
-                 public static bool test1(string test) { return "test"==test; }
+                 public static bool OutVal(int test){ return test == 1; }
              }
 
 public class Tests {
 
             [Test]
             public void Test0(){
-                Assert.True(OutputValidator0.test1(Function1.test1(InputGenerator0.test1())));
+                Assert.True(OutputValidator0.OutVal(Function1.TestFunc3(InputGenerator0.InGen())));
             }
 
 }

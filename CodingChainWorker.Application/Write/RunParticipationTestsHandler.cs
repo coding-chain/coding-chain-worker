@@ -4,10 +4,11 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Application.Contracts.IService;
-using Application.Read.Code.Execution;
+using Application.Read.Execution;
 using Domain.TestExecution;
 using Domain.TestExecution.OOP.CSharp;
 using MediatR;
+using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -24,31 +25,27 @@ namespace Application.Write
 
     public class RunParticipationTestsHandler : INotificationHandler<RunParticipationTestsCommand>
     {
-        private readonly IProcessService<CSharpParticipationTestingAggregate> _processService;
-        private readonly IExecutionResponseService _executionResponseService;
+        private readonly IServiceProvider _serviceProvider;
 
-        public RunParticipationTestsHandler(IProcessService<CSharpParticipationTestingAggregate> processService,
-            IExecutionResponseService executionResponseService)
+        public RunParticipationTestsHandler(IServiceProvider serviceProvider)
         {
-            _processService = processService;
-            _executionResponseService = executionResponseService;
+            _serviceProvider = serviceProvider;
         }
 
-        public Task Handle(RunParticipationTestsCommand request, CancellationToken cancellationToken)
+        public async Task Handle(RunParticipationTestsCommand request, CancellationToken cancellationToken)
         {
+            using var scope = _serviceProvider.CreateScope();
+            var processService = scope.ServiceProvider
+                .GetRequiredService<IProcessService<CSharpParticipationTestingAggregate>>();
+            var executionResponseService = scope.ServiceProvider.GetRequiredService<IExecutionResponseService>();
             var execution = new CSharpParticipationTestingAggregate(
                 new ParticipationId(request.ParticipationId),
                 request.Language,
                 request.HeaderCode,
                 request.Functions.Select(f => new Function(f.Code, f.Order)).ToList(),
                 request.Tests.Select(t => new Test(t.OutputValidator, t.InputGenerator)).ToList());
-            // TODO Return async task not handler
-            var handler = _processService.WriteAndExecuteParticipation(execution);
-            var result = new CodeProcessResponse(request.ParticipationId, handler.Error, handler.Output);
-            
-            _executionResponseService.Dispatch(result);
-
-            return Task.FromResult(JsonConvert.SerializeObject(result));
+            var result = await processService.WriteAndExecuteParticipation(execution);
+            executionResponseService.Dispatch(result);
         }
     }
 }

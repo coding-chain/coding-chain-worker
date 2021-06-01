@@ -77,8 +77,8 @@ namespace CodingChainWorker.Infrastructure.Tests
         public void Test1()
         {
             var handler = _processService.WriteAndExecuteParticipation(_participationTestingAggregate);
-            handler.ProcessEnded += (sender, args) => Console.WriteLine(args);
-            Assert.Pass();
+            // handler.ProcessEnded += (sender, args) => Console.WriteLine(args);
+            // Assert.Pass();
         }
     }
 }
