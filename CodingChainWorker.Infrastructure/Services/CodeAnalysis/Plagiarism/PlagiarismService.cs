@@ -1,3 +1,4 @@
+using System;
 using System.Security.Cryptography;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
@@ -22,11 +23,12 @@ namespace CodingChainApi.Infrastructure.Services.CodeAnalysis.Plagiarism
                     continue;
                 }
 
-                functionToCompare.Code = Regex.Replace(suspectedFunction.Code, @"\s+", " ");
+                functionToCompare.Code = Regex.Replace(functionToCompare.Code, @"\s+", " ");
                 var averageSimilarity = GetAverageSimilarityRate(suspectedFunction.Code, functionToCompare.Code);
                 if (averageSimilarity > ICodePlagiarismAnalysisData.THRESHOLD)
                 {
-                    response.addPlagiarizedFunction(suspectedFunction.Id, functionToCompare.Id, averageSimilarity);
+                    response.addPlagiarizedFunction(suspectedFunction.Id, functionToCompare.Id,
+                        String.Format("{0:0.00}", averageSimilarity));
                 }
             }
 
@@ -48,7 +50,7 @@ namespace CodingChainApi.Infrastructure.Services.CodeAnalysis.Plagiarism
         {
             var suspectedList = SampleFingerprints(ExtractFingerprints(suspectedFunctioncode, k), t + 1 - k);
             var comparedList = SampleFingerprints(ExtractFingerprints(comparedFunctionCode, k), t + 1 - k);
-            var rate = GetIntersection(suspectedList, comparedList).Count / suspectedList.Count;
+            var rate = (double) GetIntersection(suspectedList, comparedList).Count / comparedList.Count;
             return rate;
         }
 
@@ -58,7 +60,7 @@ namespace CodingChainApi.Infrastructure.Services.CodeAnalysis.Plagiarism
             int minIndex = -1;
             int preMinIndex = -1;
 
-            for (int i = 0; i < rawFingerPrints.Count; i++)
+            for (int i = 0; i < rawFingerPrints.Count - w; i++)
             {
                 string? tmpMin = null;
                 for (int j = i; j < i + w; j++)
@@ -83,7 +85,7 @@ namespace CodingChainApi.Infrastructure.Services.CodeAnalysis.Plagiarism
         private List<string> ExtractFingerprints(string content, int k)
         {
             List<string> fingerprints = new List<string>();
-            for (int i = 0; i < content.Length; i++)
+            for (int i = 0; i < content.Length - k; i++)
             {
                 string kgram = content.Substring(i, k);
                 string hash = HashUtils.GetHash(SHA256.Create(), kgram);
