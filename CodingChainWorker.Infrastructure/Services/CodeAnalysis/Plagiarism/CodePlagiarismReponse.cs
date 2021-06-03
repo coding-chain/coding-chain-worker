@@ -8,12 +8,12 @@ namespace CodingChainApi.Infrastructure.Services.CodeAnalysis.Plagiarism
     {
         private List<PlagiarizedFunction> plagiarizedFunctions = new();
 
-        public void addPlagiarizedFunction(Guid plagiarizedFunctionId, Guid functionComparedId, string rate)
+        public void AddPlagiarizedFunction(Guid plagiarizedFunctionId, Guid functionComparedId, string rate)
         {
             plagiarizedFunctions.Add(new PlagiarizedFunction(plagiarizedFunctionId, functionComparedId, rate));
         }
 
-        public bool isTherePlagiarism()
+        public bool IsTherePlagiarism()
         {
             return plagiarizedFunctions.Count > 0;
         }

@@ -27,7 +27,7 @@ namespace CodingChainApi.Infrastructure.Services.CodeAnalysis.Plagiarism
                 var averageSimilarity = GetAverageSimilarityRate(suspectedFunction.Code, functionToCompare.Code);
                 if (averageSimilarity > ICodePlagiarismAnalysisData.THRESHOLD)
                 {
-                    response.addPlagiarizedFunction(suspectedFunction.Id, functionToCompare.Id,
+                    response.AddPlagiarizedFunction(suspectedFunction.Id, functionToCompare.Id,
                         String.Format("{0:0.00}", averageSimilarity));
                 }
             }

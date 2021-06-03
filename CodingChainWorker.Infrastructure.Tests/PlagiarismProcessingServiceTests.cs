@@ -37,7 +37,7 @@ namespace CodingChainWorker.Infrastructure.Tests
         public void ResponseShouldNotBeEmptyBecauseOfPlagiarims()
         {
             var response = _plagiarismService.AnalyseCode(_suspectedFunction, _functionsToCompare);
-            Assert.AreEqual(response.isTherePlagiarism(), true);
+            Assert.AreEqual(response.IsTherePlagiarism(), true);
         }
 
         [Test]
@@ -46,7 +46,7 @@ namespace CodingChainWorker.Infrastructure.Tests
             var noPlagiarizedFunction = _suspectedFunction;
             noPlagiarizedFunction.Code = "this is a very different code";
             var response = _plagiarismService.AnalyseCode(noPlagiarizedFunction, _functionsToCompare);
-            Assert.AreEqual(response.isTherePlagiarism(), false);
+            Assert.AreEqual(response.IsTherePlagiarism(), false);
         }
     }
 }
