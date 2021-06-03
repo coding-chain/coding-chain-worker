@@ -2,23 +2,28 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Domain.Exceptions;
+using Domain.TestExecution.Helpers;
 
 namespace Domain.TestExecution.OOP.CSharp
 {
-    public class CsharpCodeGenerator : IPooCodeGenerator
+    public class CsharpCodeGenerator : ICodeGenerator
     {
+        public string GetTestNameByOrder(int order) => $"{TestPrefix}{order}";
+        public IReadOnlyCollection<ITest> Tests => _tests.AsReadOnly();
+        public IReadOnlyCollection<FunctionBase> Functions => _functions.ToList().AsReadOnly();
+        public string TestPrefix => "Test";
         private List<OoTest> _tests;
-        private SortedSet<OoFunction> _functions;
-        private IPooCodeAnalyzer _analyzer;
+        private SortedSet<Function> _functions;
+        private ICodeAnalyzer _analyzer;
         private string _headerCode;
 
 
-        public CsharpCodeGenerator(IList<Test> tests, IList<Function> functions, IPooCodeAnalyzer analyzer,
+        public CsharpCodeGenerator(IList<TestEntity> tests, IList<FunctionEntity> functions, ICodeAnalyzer analyzer,
             string headerCode)
         {
             _analyzer = analyzer;
             _headerCode = headerCode;
-            _functions = new SortedSet<OoFunction>(functions.Select(ToOoFunction));
+            _functions = new SortedSet<Function>(functions.Select(ToOoFunction));
             _tests = tests.Select(ToOoTest).ToList();
         }
 
@@ -32,32 +37,33 @@ namespace Domain.TestExecution.OOP.CSharp
 
         public string GetClassName(string name, int order) => $"{name}{order}";
 
-        private OoFunction ToOoFunction(Function func)
+        private Function ToOoFunction(FunctionEntity func)
         {
-            var className = GetClassName("Function", func.Id);
-            var funcName = _analyzer.FindMethodName(func.CleanedCode) ??
+            var className = GetClassName("Function", func.Order);
+            var funcName = _analyzer.FindFunctionName(func.CleanedCode) ??
                            throw new DomainException($"Cannot find method name for function {func}");
-            return new OoFunction(ToStaticClass(func.CleanedCode, className), func.Id, funcName, className);
+            return new Function(ToStaticClass(func.CleanedCode, className), func.Order, funcName, className, func.Id);
         }
 
-        private OoTest ToOoTest(Test test, int order)
+        private OoTest ToOoTest(TestEntity test, int order)
         {
             var outClassName = GetClassName("OutputValidator", order);
             var inClassName = GetClassName("InputGenerator", order);
-            var inMethodName = _analyzer.FindMethodName(test.InputGenerator) 
+            var inMethodName = _analyzer.FindFunctionName(test.InputGenerator) 
                                ?? throw new DomainException($"Cannot find method name for input generator on test {test}") ;
-            var outMethodName = _analyzer.FindMethodName(test.OutputValidator)
+            var outMethodName = _analyzer.FindFunctionName(test.OutputValidator)
                                 ?? throw new DomainException($"Cannot find method name for output validator on test {test}") ;
-            var inFunc = new OoFunction(ToStaticClass(test.CleanedInputGenerator, inClassName), order,
+            var inFunc = new Function(ToStaticClass(test.CleanedInputGenerator, inClassName), order,
                 inMethodName, inClassName);
-            var outFunc = new OoFunction(ToStaticClass(test.CleanedOutputValidator, outClassName), order,
+            var outFunc = new Function(ToStaticClass(test.CleanedOutputValidator, outClassName), order,
                 outMethodName, outClassName);
-            return new OoTest(inFunc, outFunc);
+            return new OoTest(inFunc, outFunc, test.Id, GetTestNameByOrder(order));
         }
 
         public string GetExecutableCode()
         {
             var builder = new StringBuilder();
+            builder.AppendLine("using NUnit.Framework;");
             builder.AppendLine(_headerCode);
             builder.AppendLine(CreateFunctionDeclarations());
             builder.AppendLine(CreateTestClass());
@@ -65,12 +71,12 @@ namespace Domain.TestExecution.OOP.CSharp
             return res;
         }
 
-        public string CreateTestFunction(OoTest test, int order)
+        public string CreateTestFunction(OoTest test)
         {
             var builder = new StringBuilder();
             builder.AppendLine($@"
             [Test]
-            public void Test{order}(){{
+            public void {test.Name}(){{
                 Assert.True({CreatePipeline(test)});
             }}");
             return builder.ToString();
@@ -79,19 +85,19 @@ namespace Domain.TestExecution.OOP.CSharp
         public string CreatePipeline(OoTest test)
         {
             var builder = new StringBuilder();
-            var allFunctions = new List<OoFunction>() {test.InFunc};
+            var allFunctions = new List<Function>() {test.OoInFunc};
             allFunctions.AddRange(_functions);
-            allFunctions.Add(test.OutFunc);
-            builder.Append(GetFunctionCall(new Stack<OoFunction>(allFunctions)));
+            allFunctions.Add(test.OoOutFunc);
+            builder.Append(GetFunctionCall(new Stack<Function>(allFunctions)));
 
             return builder.ToString();
         }
 
-        private string GetFunctionCall(Stack<OoFunction> functionsStack)
+        private string GetFunctionCall(Stack<Function> functionsStack)
         {
             if (functionsStack.Count == 0) return "";
             var function = functionsStack.Pop();
-            return function.MethodCall(GetFunctionCall(functionsStack));
+            return function.FunctionCall(GetFunctionCall(functionsStack));
         }
 
         public string CreateTestClass()
@@ -100,7 +106,7 @@ namespace Domain.TestExecution.OOP.CSharp
             builder.AppendLine("public class Tests {");
             for (var i = 0; i < _tests.Count; i++)
             {
-                builder.AppendLine(CreateTestFunction(_tests[i], i));
+                builder.AppendLine(CreateTestFunction(_tests[i]));
             }
 
             builder.AppendLine("}");

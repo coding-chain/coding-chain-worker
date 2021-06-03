@@ -1,16 +1,22 @@
 using System.Collections.Generic;
+using Domain.TestExecution.Helpers;
 
 namespace Domain.TestExecution.OOP.CSharp
 {
+
     public  class CSharpParticipationTestingAggregate : ParticipationTestingAggregate
     {
-        private IPooCodeGenerator _codeGenerator;
 
-        public CSharpParticipationTestingAggregate(ParticipationId id, string language, string headerCode,
-            IList<Function> functions, IList<Test> tests) : base(id, language, headerCode)
+        public CSharpParticipationTestingAggregate(ParticipationId id, LanguageEnum language, string headerCode,
+            IList<FunctionEntity> functions, IList<TestEntity> tests) : base(id, language, headerCode, functions, tests)
         {
-            _codeGenerator = new CsharpCodeGenerator(tests, functions, new CsharpCodeAnalyzer(), HeaderCode);
+            CodeGenerator = new CsharpCodeGenerator(tests, functions, CodeAnalyzer, HeaderCode);
         }
-        public override string GetExecutableCode() => _codeGenerator.GetExecutableCode();
+
+        
+        protected sealed override ICodeAnalyzer CodeAnalyzer { get; } = new CsharpCodeAnalyzer();
+        protected override ICodeGenerator CodeGenerator { get; }
+        protected override IUnitTestsParser UnitTestsParser { get; } = new NUnitTestsParser();
+        
     }
 }

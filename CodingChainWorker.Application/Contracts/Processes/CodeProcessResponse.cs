@@ -1,6 +1,7 @@
 using System;
+using System.Collections.Generic;
 
-namespace Application.Read.Execution
+namespace Application.Contracts.Processes
 {
-    public record CodeProcessResponse(Guid ParticipationId, string? Errors, string? Output);
+    public record CodeProcessResponse(Guid ParticipationId, string? Errors, string? Output, IList<Guid> TestsPassedIds);
 }

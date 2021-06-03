@@ -1,10 +1,17 @@
+using System;
 using System.Text.RegularExpressions;
+using Domain.Contracts;
 
 namespace Domain.TestExecution
 {
-    public record Test
+    public record TestId(Guid Value) : IEntityId
     {
-        public Test(string outputValidator, string inputGenerator)
+        public override string ToString() => Value.ToString();
+    }
+
+    public class TestEntity : Entity<TestId>
+    {
+        public TestEntity(TestId id, string outputValidator, string inputGenerator) : base(id)
         {
             OutputValidator = outputValidator;
             InputGenerator = inputGenerator;
@@ -17,6 +24,9 @@ namespace Domain.TestExecution
 
         public string CleanedInputGenerator { get; init; }
         public string CleanedOutputValidator { get; init; }
+        
+        public bool HasPassed { get; set; } = false;
+
 
         public override string ToString()
         {

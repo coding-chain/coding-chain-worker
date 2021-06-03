@@ -18,12 +18,12 @@ namespace CodingChainWorker.Domain.Tests.TestExecution
         [Test]
         public void constructor_should_throw_on_function_without_method_name()
         {
-            var invalidFunctions = new List<Function>()
+            var invalidFunctions = new List<FunctionEntity>()
             {
-                new Function(FunctionsTestHelper.GetTestFunctionCode(null, null), 1)
+                new FunctionEntity(FunctionsTestHelper.GetTestFunctionCode(null, null), 1)
             };
             Assert.Throws<DomainException>(() =>
-                new CsharpCodeGenerator(new List<Test>(), invalidFunctions, new CsharpCodeAnalyzer(), ""));
+                new CsharpCodeGenerator(new List<TestEntity>(), invalidFunctions, new CsharpCodeAnalyzer(), ""));
         }
 
         [Test]
@@ -33,12 +33,12 @@ namespace CodingChainWorker.Domain.Tests.TestExecution
             var outVal = FunctionsTestHelper.GetTestFunctionCode("outputValidator", null, "string", "bool",
                 @"return test == ""test"";");
 
-            var invalidInputTest = new List<Test>()
+            var invalidInputTest = new List<TestEntity>()
             {
-                new Test(outVal, inGen)
+                new TestEntity(outVal, inGen)
             };
             Assert.Throws<DomainException>(() =>
-                new CsharpCodeGenerator(invalidInputTest, new List<Function>(), new CsharpCodeAnalyzer(), ""));
+                new CsharpCodeGenerator(invalidInputTest, new List<FunctionEntity>(), new CsharpCodeAnalyzer(), ""));
         }
 
         [Test]
@@ -49,12 +49,12 @@ namespace CodingChainWorker.Domain.Tests.TestExecution
             var inGen =
                 FunctionsTestHelper.GetTestFunctionCode("inputGenerator", null, null, "string", @"return  ""input"";");
 
-            var invalidInputTest = new List<Test>()
+            var invalidInputTest = new List<TestEntity>()
             {
                 new(outVal, inGen)
             };
             Assert.Throws<DomainException>(() =>
-                new CsharpCodeGenerator(invalidInputTest, new List<Function>(), new CsharpCodeAnalyzer(), ""));
+                new CsharpCodeGenerator(invalidInputTest, new List<FunctionEntity>(), new CsharpCodeAnalyzer(), ""));
         }
     }
 }

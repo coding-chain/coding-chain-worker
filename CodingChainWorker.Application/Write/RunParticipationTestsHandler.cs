@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Application.Contracts.IService;
-using Application.Read.Execution;
+using Application.Contracts.Processes;
 using Domain.TestExecution;
 using Domain.TestExecution.OOP.CSharp;
 using MediatR;
@@ -14,13 +14,13 @@ using Newtonsoft.Json.Linq;
 
 namespace Application.Write
 {
-    public record RunParticipationTestsCommand(Guid ParticipationId, string Language, string HeaderCode,
+    public record RunParticipationTestsCommand(Guid Id, LanguageEnum Language, string HeaderCode,
         IList<RunParticipationTestsCommand.Test> Tests,
         IList<RunParticipationTestsCommand.Function> Functions) : INotification
     {
-        public record Test(string OutputValidator, string InputGenerator);
+        public record Test(Guid Id, string OutputValidator, string InputGenerator);
 
-        public record Function(string Code, int Order);
+        public record Function(Guid Id, string Code, int Order);
     }
 
     public class RunParticipationTestsHandler : INotificationHandler<RunParticipationTestsCommand>
@@ -38,14 +38,34 @@ namespace Application.Write
             var processService = scope.ServiceProvider
                 .GetRequiredService<IProcessService<CSharpParticipationTestingAggregate>>();
             var executionResponseService = scope.ServiceProvider.GetRequiredService<IExecutionResponseService>();
-            var execution = new CSharpParticipationTestingAggregate(
-                new ParticipationId(request.ParticipationId),
-                request.Language,
-                request.HeaderCode,
-                request.Functions.Select(f => new Function(f.Code, f.Order)).ToList(),
-                request.Tests.Select(t => new Test(t.OutputValidator, t.InputGenerator)).ToList());
-            var result = await processService.WriteAndExecuteParticipation(execution);
-            executionResponseService.Dispatch(result);
+            try
+            {
+                var execution = new CSharpParticipationTestingAggregate(
+                    new ParticipationId(request.Id),
+                    request.Language,
+                    request.HeaderCode,
+                    request.Functions.Select(f => new FunctionEntity(f.Code, f.Order, new FunctionId(f.Id))).ToList(),
+                    request.Tests.Select(t => new TestEntity(new TestId(t.Id), t.OutputValidator, t.InputGenerator))
+                        .ToList());
+
+                await processService.WriteAndExecuteParticipation(execution);
+                execution.ParseResult();
+                executionResponseService.Dispatch(new CodeProcessResponse(
+                    execution.Id.Value,
+                    execution.Error,
+                    execution.Output,
+                    execution.Tests
+                        .Where(t => t.HasPassed)
+                        .Select(t => t.Id.Value)
+                        .ToList()
+                ));
+            }
+            catch (Exception e)
+            {
+                executionResponseService.Dispatch(new CodeProcessResponse(
+                    request.Id,
+                    "Parsing / Execution error", null, new List<Guid>()));
+            }
         }
     }
 }

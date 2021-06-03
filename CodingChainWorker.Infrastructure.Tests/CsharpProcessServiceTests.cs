@@ -1,16 +1,14 @@
+
+
 using System;
 using System.Collections.Generic;
-using CodingChainApi.Infrastructure.Services;
 using CodingChainApi.Infrastructure.Services.Processes;
 using CodingChainApi.Infrastructure.Settings;
-using Domain.Contracts;
 using Domain.TestExecution;
 using Domain.TestExecution.OOP.CSharp;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
-using NUnit.Framework.Internal;
-using Test = Domain.TestExecution.Test;
 
 namespace CodingChainWorker.Infrastructure.Tests
 {
@@ -29,7 +27,7 @@ namespace CodingChainWorker.Infrastructure.Tests
         public override string GetExecutableCode() => ExecutionCode;
 
         public FakeParticipationTestingAggregate(ParticipationId id, string language, string headerCode,
-            IList<Function> functions, IList<Test> tests) : base(id, language, headerCode, functions, tests)
+            IList<FunctionEntity> functions, IList<TestEntity> tests) : base(id, language, headerCode, functions, tests)
         {
         }
     }
@@ -58,8 +56,8 @@ namespace CodingChainWorker.Infrastructure.Tests
                 new ParticipationId(Guid.NewGuid()),
                 "csharp",
                 "import System;",
-                new List<Function> {new("public static string test1(string test) { return test; }", 0)},
-                new List<Test>
+                new List<FunctionEntity> {new("public static string test1(string test) { return test; }", 0)},
+                new List<TestEntity>
                 {
                     new("public static bool test1(string test) { return \"test\"==test; }",
                         "public static string test1() { return \"test\"; }")

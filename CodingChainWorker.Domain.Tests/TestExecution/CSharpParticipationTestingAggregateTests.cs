@@ -21,12 +21,12 @@ namespace CodingChainWorker.Domain.Tests.TestExecution
                 new ParticipationId(Guid.NewGuid()),
                 "csharp",
                 GetTestHeaderCode(),
-                new List<Function>()
+                new List<FunctionEntity>()
                 {
                     new(FunctionsTestHelper.GetTestFunctionCode("test",2, "string"), 2),
                     new(FunctionsTestHelper.GetTestFunctionCode("test",1, "string"), 1)
                 },
-                new List<Test>()
+                new List<TestEntity>()
                 {
                     new (
                         FunctionsTestHelper.GetTestFunctionCode("test",1, "string", "bool", @"return ""test""==test;"),
