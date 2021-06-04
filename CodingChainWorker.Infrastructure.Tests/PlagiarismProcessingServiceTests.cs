@@ -46,7 +46,7 @@ namespace CodingChainWorker.Infrastructure.Tests
             var noPlagiarizedFunction = _suspectedFunction;
             noPlagiarizedFunction.Code = "this is a very different code";
             var response = _plagiarismService.AnalyseCode(noPlagiarizedFunction, _functionsToCompare);
-            Assert.AreEqual(response.Count == 0, false);
+            Assert.AreEqual(response.Count == 0, true);
         }
     }
 }
