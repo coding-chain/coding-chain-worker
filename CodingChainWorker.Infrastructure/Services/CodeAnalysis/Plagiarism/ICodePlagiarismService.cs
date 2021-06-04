@@ -5,6 +5,6 @@ namespace CodingChainApi.Infrastructure.Services.CodeAnalysis.Plagiarism
 {
     public interface ICodePlagiarismService
     {
-        public CodePlagiarismReponse AnalyseCode(Function suspectedFunction, IList<Function> functionsToCompare);
+        public List<PlagiarizedFunction> AnalyseCode(Function suspectedFunction, IList<Function> functionsToCompare);
     }
 }
