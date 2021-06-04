@@ -15,23 +15,14 @@ namespace Domain.TestExecution
         {
             OutputValidator = outputValidator;
             InputGenerator = inputGenerator;
-            CleanedInputGenerator = Regex.Replace(inputGenerator, @"\s+", " ");
-            CleanedOutputValidator = Regex.Replace(outputValidator, @"\s+", " ");
         }
 
         public string OutputValidator { get; }
         public string InputGenerator { get; }
-
-        public string CleanedInputGenerator { get; init; }
-        public string CleanedOutputValidator { get; init; }
         
         public bool HasPassed { get; set; } = false;
 
 
-        public override string ToString()
-        {
-            return
-                $"{nameof(OutputValidator)}: {OutputValidator}, {nameof(InputGenerator)}: {InputGenerator}, {nameof(CleanedInputGenerator)}: {CleanedInputGenerator}, {nameof(CleanedOutputValidator)}: {CleanedOutputValidator}";
-        }
+
     }
 }

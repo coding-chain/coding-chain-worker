@@ -18,10 +18,8 @@ namespace Domain.TestExecution
         {
             Order = order;
             Code = code;
-            CleanedCode = Regex.Replace(code, @"\s+", " ");
         }
 
-        public string CleanedCode { get; init; }
         public string Code { get; }
         public int Order { get; }
 
@@ -31,9 +29,6 @@ namespace Domain.TestExecution
             return Order.CompareTo(other?.Order);
         }
 
-        public override string ToString()
-        {
-            return $"{nameof(CleanedCode)}: {CleanedCode}, {nameof(Code)}: {Code}, {nameof(Id)}: {Id}";
-        }
+
     }
 }

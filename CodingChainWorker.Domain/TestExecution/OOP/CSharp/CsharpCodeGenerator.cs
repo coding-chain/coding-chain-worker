@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using Domain.Exceptions;
 using Domain.TestExecution.Helpers;
 
@@ -13,17 +14,18 @@ namespace Domain.TestExecution.OOP.CSharp
         public IReadOnlyCollection<FunctionBase> Functions => _functions.ToList().AsReadOnly();
         public string TestPrefix => "Test";
         private List<OoTest> _tests;
-        private SortedSet<Function> _functions;
+        private SortedSet<OoFunction> _functions;
         private ICodeAnalyzer _analyzer;
         private string _headerCode;
 
+        
 
         public CsharpCodeGenerator(IList<TestEntity> tests, IList<FunctionEntity> functions, ICodeAnalyzer analyzer,
             string headerCode)
         {
             _analyzer = analyzer;
             _headerCode = headerCode;
-            _functions = new SortedSet<Function>(functions.Select(ToOoFunction));
+            _functions = new SortedSet<OoFunction>(functions.Select(ToOoFunction));
             _tests = tests.Select(ToOoTest).ToList();
         }
 
@@ -37,25 +39,27 @@ namespace Domain.TestExecution.OOP.CSharp
 
         public string GetClassName(string name, int order) => $"{name}{order}";
 
-        private Function ToOoFunction(FunctionEntity func)
+        private OoFunction ToOoFunction(FunctionEntity func)
         {
             var className = GetClassName("Function", func.Order);
-            var funcName = _analyzer.FindFunctionName(func.CleanedCode) ??
+            var funcName = _analyzer.FindFunctionName(func.Code) ??
                            throw new DomainException($"Cannot find method name for function {func}");
-            return new Function(ToStaticClass(func.CleanedCode, className), func.Order, funcName, className, func.Id);
+            return new OoFunction(ToStaticClass(func.Code, className), func.Order, funcName, className, func.Id);
         }
 
         private OoTest ToOoTest(TestEntity test, int order)
         {
             var outClassName = GetClassName("OutputValidator", order);
             var inClassName = GetClassName("InputGenerator", order);
-            var inMethodName = _analyzer.FindFunctionName(test.InputGenerator) 
-                               ?? throw new DomainException($"Cannot find method name for input generator on test {test}") ;
+            var inMethodName = _analyzer.FindFunctionName(test.InputGenerator)
+                               ?? throw new DomainException(
+                                   $"Cannot find method name for input generator on test {test}");
             var outMethodName = _analyzer.FindFunctionName(test.OutputValidator)
-                                ?? throw new DomainException($"Cannot find method name for output validator on test {test}") ;
-            var inFunc = new Function(ToStaticClass(test.CleanedInputGenerator, inClassName), order,
+                                ?? throw new DomainException(
+                                    $"Cannot find method name for output validator on test {test}");
+            var inFunc = new OoFunction(ToStaticClass(test.InputGenerator, inClassName), order,
                 inMethodName, inClassName);
-            var outFunc = new Function(ToStaticClass(test.CleanedOutputValidator, outClassName), order,
+            var outFunc = new OoFunction(ToStaticClass(test.OutputValidator, outClassName), order,
                 outMethodName, outClassName);
             return new OoTest(inFunc, outFunc, test.Id, GetTestNameByOrder(order));
         }
@@ -85,15 +89,15 @@ namespace Domain.TestExecution.OOP.CSharp
         public string CreatePipeline(OoTest test)
         {
             var builder = new StringBuilder();
-            var allFunctions = new List<Function>() {test.OoInFunc};
+            var allFunctions = new List<OoFunction>() {test.OoInFunc};
             allFunctions.AddRange(_functions);
             allFunctions.Add(test.OoOutFunc);
-            builder.Append(GetFunctionCall(new Stack<Function>(allFunctions)));
+            builder.Append(GetFunctionCall(new Stack<OoFunction>(allFunctions)));
 
             return builder.ToString();
         }
 
-        private string GetFunctionCall(Stack<Function> functionsStack)
+        private string GetFunctionCall(Stack<OoFunction> functionsStack)
         {
             if (functionsStack.Count == 0) return "";
             var function = functionsStack.Pop();

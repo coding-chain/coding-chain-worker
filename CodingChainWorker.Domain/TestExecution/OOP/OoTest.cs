@@ -6,7 +6,7 @@ namespace Domain.TestExecution.OOP
     public record OoTest : ITest
 
     {
-        public OoTest(Function ooInFunc, Function ooOutFunc, TestId id, string name)
+        public OoTest(OoFunction ooInFunc, OoFunction ooOutFunc, TestId id, string name)
         {
             OoInFunc = ooInFunc;
             OoOutFunc = ooOutFunc;
@@ -14,8 +14,8 @@ namespace Domain.TestExecution.OOP
             Name = name;
         }
 
-        public readonly Function OoInFunc;
-        public readonly Function OoOutFunc;
+        public readonly OoFunction OoInFunc;
+        public readonly OoFunction OoOutFunc;
 
         public FunctionBase InFunc => OoInFunc;
         public FunctionBase OutFunc => OoOutFunc;
