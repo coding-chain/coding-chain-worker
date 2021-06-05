@@ -48,7 +48,7 @@ namespace CodingChainApi
             services.AddHttpContextAccessor();
             
             //RabbitMQ
-            services.AddHostedService<CodeExecutionService>();
+            services.AddHostedService<ParticipationPendingExecutionListenerService>();
             //
 
 

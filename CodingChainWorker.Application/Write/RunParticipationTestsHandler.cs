@@ -37,7 +37,7 @@ namespace Application.Write
             using var scope = _serviceProvider.CreateScope();
             var processService = scope.ServiceProvider
                 .GetRequiredService<IProcessService<CSharpParticipationTestingAggregate>>();
-            var executionResponseService = scope.ServiceProvider.GetRequiredService<IExecutionResponseService>();
+            var executionResponseService = scope.ServiceProvider.GetRequiredService<IParticipationDoneService>();
             try
             {
                 var execution = new CSharpParticipationTestingAggregate(
