@@ -5,6 +5,7 @@ using CodingChainApi.Infrastructure.Messaging;
 using CodingChainApi.Infrastructure.Services;
 using CodingChainApi.Infrastructure.Services.Processes;
 using CodingChainApi.Infrastructure.Settings;
+using Domain.Plagiarism;
 using Domain.TestExecution.OOP.CSharp;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,6 +23,7 @@ namespace CodingChainApi.Infrastructure
             services.AddScoped<IParticipationDoneService, ParticipationDoneResponseService>();
             services.AddScoped<IDirectoryService, DirectoryService>();
             ConfigureInjectableSettings<IAppDataSettings, AppDataSettings>(services, configuration);
+            ConfigureInjectableSettings<IPlagiarismSettings, PlagiarismSettings>(services, configuration);
             ConfigureInjectableSettings<ICSharpExecutionSettings, CSharpExecutionSettings>(services, configuration);
             ConfigureInjectableSettings<ITemplateSettings, TemplateSettings>(services, configuration);
             ConfigureRabbitMqSettings(services, configuration);
@@ -30,7 +32,8 @@ namespace CodingChainApi.Infrastructure
 
         private static TImplementation ConfigureInjectableSettings<TInterface, TImplementation>(
             IServiceCollection services,
-            IConfiguration configuration, bool singleton = false ) where TImplementation : class, TInterface where TInterface : class
+            IConfiguration configuration, bool singleton = false) where TImplementation : class, TInterface
+            where TInterface : class
         {
             var settingsName = typeof(TImplementation).Name;
             var settings = configuration.GetSection(settingsName).Get<TImplementation>();

@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using Application.Common.Behaviors;
 using Application.Common.Events;
+using Domain.Plagiarism;
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,6 +18,7 @@ namespace Application
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(UnhandledExceptionBehaviour<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
+            services.AddScoped<ICodePlagiarismService, PlagiarismService>();
             return services;
         }
     }

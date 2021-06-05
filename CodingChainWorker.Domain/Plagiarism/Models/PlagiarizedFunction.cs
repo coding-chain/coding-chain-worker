@@ -1,6 +1,6 @@
 using System;
 
-namespace CodingChainApi.Infrastructure.Models
+namespace Domain.Plagiarism.Models
 {
     public class PlagiarizedFunction
     {

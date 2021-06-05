@@ -1,52 +1,52 @@
-using System;
-using System.Security.Cryptography;
 using System.Collections.Generic;
+using System.Linq;
+using System.Security.Cryptography;
 using System.Text.RegularExpressions;
-using CodingChainApi.Infrastructure.Common.Data;
-using CodingChainApi.Infrastructure.Models;
 using CodingChainApi.Infrastructure.Utils;
+using Domain.Plagiarism.Models;
 
-namespace CodingChainApi.Infrastructure.Services.CodeAnalysis.Plagiarism
+namespace Domain.Plagiarism
 {
     public class PlagiarismService : ICodePlagiarismService
     {
-        public List<PlagiarizedFunction> AnalyseCode(Function suspectedFunction, IList<Function> functionsToCompare)
+        private IPlagiarismSettings? _settings;
+
+        public FunctionAggregate AnalyseCode(FunctionAggregate suspectedFunctionAggregate,
+            IList<FunctionAggregate> functionsToCompare,
+            IPlagiarismSettings settings)
         {
-            List<PlagiarizedFunction> plagiarizedFunctions = new List<PlagiarizedFunction>();
-            suspectedFunction.Code = Regex.Replace(suspectedFunction.Code, @"\s+", " ");
+            _settings = settings;
+            suspectedFunctionAggregate.Code = Regex.Replace(suspectedFunctionAggregate.Code, @"\s+", " ");
             foreach (var functionToCompare in functionsToCompare)
             {
-                if (functionToCompare.Id.Equals(suspectedFunction.Id))
+                if (functionToCompare.Id.Equals(suspectedFunctionAggregate.Id))
                 {
                     continue;
                 }
 
                 functionToCompare.Code = Regex.Replace(functionToCompare.Code, @"\s+", " ");
-                var averageSimilarity = GetAverageSimilarityRate(suspectedFunction.Code, functionToCompare.Code);
-                if (averageSimilarity > ICodePlagiarismAnalysisData.THRESHOLD)
+                var averageSimilarity =
+                    GetAverageSimilarityRate(suspectedFunctionAggregate.Code, functionToCompare.Code);
+                if (averageSimilarity > settings.Threshold)
                 {
-                    plagiarizedFunctions.Add(new PlagiarizedFunction(suspectedFunction.Id, functionToCompare.Id,
-                        String.Format("{0:0.00}", averageSimilarity)));
+                    suspectedFunctionAggregate.AddSimilarFunction(functionToCompare.Id, averageSimilarity);
                 }
             }
 
-            return plagiarizedFunctions;
+            return suspectedFunctionAggregate;
         }
 
         private double GetAverageSimilarityRate(string suspectedFunctionCode, string comparedFunctionCode)
         {
-            var narrowSimilarity = GetSimilarityRate((int) ICodePlagiarismAnalysisData.NARROW_CONFIG.SAMPLING_THRESHOLD,
-                (int) ICodePlagiarismAnalysisData.NARROW_CONFIG.K_GRAM_LENGTH, suspectedFunctionCode,
-                comparedFunctionCode);
-            var broadSimilarity = GetSimilarityRate((int) ICodePlagiarismAnalysisData.BROAD_CONFIG.SAMPLING_THRESHOLD,
-                (int) ICodePlagiarismAnalysisData.BROAD_CONFIG.K_GRAM_LENGTH, suspectedFunctionCode,
-                comparedFunctionCode);
-            return (narrowSimilarity + broadSimilarity) / 2;
+            return _settings.Configurations.Average(config => GetSimilarityRate(
+                config.SamplingWindow,
+                config.KGramLength,
+                suspectedFunctionCode, comparedFunctionCode));
         }
 
-        private double GetSimilarityRate(int t, int k, string suspectedFunctioncode, string comparedFunctionCode)
+        private double GetSimilarityRate(int t, int k, string suspectedFunctionCode, string comparedFunctionCode)
         {
-            var suspectedList = SampleFingerprints(ExtractFingerprints(suspectedFunctioncode, k), t + 1 - k);
+            var suspectedList = SampleFingerprints(ExtractFingerprints(suspectedFunctionCode, k), t + 1 - k);
             var comparedList = SampleFingerprints(ExtractFingerprints(comparedFunctionCode, k), t + 1 - k);
             var rate = (double) GetIntersection(suspectedList, comparedList).Count / comparedList.Count;
             return rate;
@@ -54,14 +54,14 @@ namespace CodingChainApi.Infrastructure.Services.CodeAnalysis.Plagiarism
 
         private List<string> SampleFingerprints(List<string> rawFingerPrints, int w)
         {
-            List<string> sampledFingerprints = new List<string>();
-            int minIndex = -1;
-            int preMinIndex = -1;
+            var sampledFingerprints = new List<string>();
+            var minIndex = -1;
+            var preMinIndex = -1;
 
-            for (int i = 0; i < rawFingerPrints.Count - w; i++)
+            for (var i = 0; i < rawFingerPrints.Count - w; i++)
             {
                 string? tmpMin = null;
-                for (int j = i; j < i + w; j++)
+                for (var j = i; j < i + w; j++)
                 {
                     if (tmpMin == null || rawFingerPrints[j].Length <= tmpMin.Length)
                     {
@@ -82,7 +82,7 @@ namespace CodingChainApi.Infrastructure.Services.CodeAnalysis.Plagiarism
 
         private List<string> ExtractFingerprints(string content, int k)
         {
-            List<string> fingerprints = new List<string>();
+            var fingerprints = new List<string>();
             for (int i = 0; i < content.Length - k; i++)
             {
                 string kgram = content.Substring(i, k);
@@ -95,7 +95,7 @@ namespace CodingChainApi.Infrastructure.Services.CodeAnalysis.Plagiarism
 
         private List<string> GetIntersection(List<string> suspectedList, List<string> comparedList)
         {
-            List<string> intersections = new List<string>();
+            var intersections = new List<string>();
             foreach (var element in comparedList)
             {
                 if (suspectedList.Contains(element))

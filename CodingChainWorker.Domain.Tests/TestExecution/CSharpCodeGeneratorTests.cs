@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using CodingChainWorker.Domain.Tests.Helpers;
 using Domain.Exceptions;
@@ -9,7 +10,6 @@ namespace CodingChainWorker.Domain.Tests.TestExecution
 {
     public class CSharpCodeGeneratorTests
     {
-
         [SetUp]
         public void SetUp()
         {
@@ -20,7 +20,8 @@ namespace CodingChainWorker.Domain.Tests.TestExecution
         {
             var invalidFunctions = new List<FunctionEntity>()
             {
-                new FunctionEntity(FunctionsTestHelper.GetTestFunctionCode(null, null), 1)
+                new FunctionEntity(FunctionsTestHelper.GetTestFunctionCode(null, null), 1,
+                    new FunctionId(Guid.NewGuid()))
             };
             Assert.Throws<DomainException>(() =>
                 new CsharpCodeGenerator(new List<TestEntity>(), invalidFunctions, new CsharpCodeAnalyzer(), ""));
@@ -35,7 +36,7 @@ namespace CodingChainWorker.Domain.Tests.TestExecution
 
             var invalidInputTest = new List<TestEntity>()
             {
-                new TestEntity(outVal, inGen)
+                new TestEntity(new TestId(Guid.NewGuid()), outVal, inGen)
             };
             Assert.Throws<DomainException>(() =>
                 new CsharpCodeGenerator(invalidInputTest, new List<FunctionEntity>(), new CsharpCodeAnalyzer(), ""));
@@ -51,7 +52,7 @@ namespace CodingChainWorker.Domain.Tests.TestExecution
 
             var invalidInputTest = new List<TestEntity>()
             {
-                new(outVal, inGen)
+                new(new TestId(Guid.NewGuid()), outVal, inGen)
             };
             Assert.Throws<DomainException>(() =>
                 new CsharpCodeGenerator(invalidInputTest, new List<FunctionEntity>(), new CsharpCodeAnalyzer(), ""));
