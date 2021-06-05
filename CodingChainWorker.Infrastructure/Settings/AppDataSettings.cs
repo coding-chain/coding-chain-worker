@@ -4,11 +4,13 @@ namespace CodingChainApi.Infrastructure.Settings
     {
         string BasePath { get; set; }
         string TemplatesPath { get; set; }
+        public string ParticipationTemplatesPath { get; set; }
     }
 
     public class AppDataSettings : IAppDataSettings
     {
         public string BasePath { get; set; }
         public string TemplatesPath { get; set; }
+        public string ParticipationTemplatesPath { get; set; }
     }
 }

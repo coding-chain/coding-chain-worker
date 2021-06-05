@@ -2,7 +2,7 @@ using Application.Contracts.Processes;
 
 namespace Application.Contracts.IService
 {
-    public interface IExecutionResponseService
+    public interface IParticipationDoneService
     {
         public void Dispatch(CodeProcessResponse processResponse);
     }

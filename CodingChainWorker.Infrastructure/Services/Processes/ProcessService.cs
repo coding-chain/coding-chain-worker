@@ -8,12 +8,20 @@ namespace CodingChainApi.Infrastructure.Services.Processes
 {
     public abstract class ProcessService<T> : IProcessService<T>, IDisposable where T : ParticipationTestingAggregate
     {
-        protected abstract string TestsFilePath { get; }
+        protected abstract FileInfo TestsFilePath { get; }
         private StreamWriter? _fileStream;
+        private readonly IDirectoryService _directoryService;
+        protected FileInfo? TemplateDirectoryPath { get; set; }
+
+        protected ProcessService(IDirectoryService directoryService)
+        {
+            _directoryService = directoryService;
+        }
+
         protected StreamWriter FileStream  {
             get
             {
-                _fileStream ??= new StreamWriter(TestsFilePath, false);
+                _fileStream ??= TestsFilePath.CreateText();
                 return _fileStream;
             }
         }
@@ -23,15 +31,17 @@ namespace CodingChainApi.Infrastructure.Services.Processes
             _fileStream?.Dispose();
         }
 
-        public Task WriteAndExecuteParticipation(T participation)
+        public async Task WriteAndExecuteParticipation(T participation)
         {
             WriteParticipation(participation);
-            return ExecuteParticipation(participation);
+            await ExecuteParticipation(participation);
+            _directoryService.DeleteParticipationDirectory(participation);
         }
-        public abstract Task ExecuteParticipation(T participation);
+        protected abstract Task ExecuteParticipation(T participation);
 
         public void WriteParticipation(T participation)
         {
+            TemplateDirectoryPath = _directoryService.GetTemplateDirectoryByParticipation(participation);
             FileStream.WriteLine(participation.GetExecutableCode());
             _fileStream?.Close();
             _fileStream = null;

@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Application.Write;
 using CodingChainApi.Infrastructure.MessageBroker;
+using CodingChainApi.Infrastructure.Messaging;
 using CodingChainApi.Infrastructure.Settings;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -10,16 +11,16 @@ using Newtonsoft.Json.Linq;
 
 namespace CodingChainApi.Services.Code
 {
-    public class CodeExecutionService : RabbitMqBaseListener<CodeExecutionService>
+    public class ParticipationPendingExecutionListenerService : RabbitMqBaseListener
     {
         private readonly IPublisher _mediator;
 
-        public CodeExecutionService(IRabbitMqSettings settings, ILogger<CodeExecutionService> logger,
+        public ParticipationPendingExecutionListenerService(IRabbitMqSettings settings, ILogger<ParticipationPendingExecutionListenerService> logger,
             IPublisher mediator) : base(
             settings, logger)
         {
-            RouteKey = settings.RoutingKey;
-            QueueName = settings.ExecutionCodeRoute;
+            Exchange = settings.ParticipationExchange;
+            RoutingKey = settings.PendingExecutionRoutingKey;
             _mediator = mediator;
         }
 
@@ -28,12 +29,11 @@ namespace CodingChainApi.Services.Code
 
             try
             {
-                _logger.LogDebug("message: {Message}",message);
                 var json = JObject.Parse(message);
                 var runParticipation = JsonConvert.DeserializeObject<RunParticipationTestsCommand>(json.ToString());
                 if (runParticipation is null)
                 {
-                    _logger.LogError("Cannot parse rabbitmq message");
+                    Logger.LogError("Cannot parse rabbitmq message");
                     return false;
                 }
                 _mediator.Publish(runParticipation);
@@ -41,8 +41,8 @@ namespace CodingChainApi.Services.Code
             }
             catch (Exception ex)
             {
-                _logger.LogError("Process fail,error:{ExceptionMessage},stackTrace:{ex.StackTrace},message:{Message}", ex.Message, message);
-                _logger.LogError(-1, ex, "Process fail");
+                Logger.LogError("Process fail,error:{ExceptionMessage},stackTrace:{ex.StackTrace},message:{Message}", ex.Message, message);
+                Logger.LogError(-1, ex, "Process fail");
                 return false;
             }
         }

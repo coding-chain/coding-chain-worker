@@ -1,6 +1,8 @@
 ﻿using System.Reflection;
 using Application.Contracts.IService;
 using CodingChainApi.Infrastructure.MessageBroker;
+using CodingChainApi.Infrastructure.Messaging;
+using CodingChainApi.Infrastructure.Services;
 using CodingChainApi.Infrastructure.Services.Processes;
 using CodingChainApi.Infrastructure.Settings;
 using Domain.TestExecution.OOP.CSharp;
@@ -17,22 +19,33 @@ namespace CodingChainApi.Infrastructure
         {
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
             services.AddScoped<IProcessService<CSharpParticipationTestingAggregate>, CsharpProcessService>();
-            services.AddScoped<IExecutionResponseService, ExecutionResponseService>();
+            services.AddScoped<IParticipationDoneService, ParticipationDoneResponseService>();
+            services.AddScoped<IDirectoryService, DirectoryService>();
             ConfigureInjectableSettings<IAppDataSettings, AppDataSettings>(services, configuration);
             ConfigureInjectableSettings<ICSharpExecutionSettings, CSharpExecutionSettings>(services, configuration);
+            ConfigureInjectableSettings<ITemplateSettings, TemplateSettings>(services, configuration);
             ConfigureRabbitMqSettings(services, configuration);
             return services;
         }
 
         private static TImplementation ConfigureInjectableSettings<TInterface, TImplementation>(
             IServiceCollection services,
-            IConfiguration configuration) where TImplementation : class, TInterface where TInterface : class
+            IConfiguration configuration, bool singleton = false ) where TImplementation : class, TInterface where TInterface : class
         {
             var settingsName = typeof(TImplementation).Name;
             var settings = configuration.GetSection(settingsName).Get<TImplementation>();
             services.Configure<TImplementation>(configuration.GetSection(settingsName));
-            services.AddSingleton<TInterface>(sp =>
-                sp.GetRequiredService<IOptions<TImplementation>>().Value);
+            if (singleton)
+            {
+                services.AddSingleton<TInterface>(sp =>
+                    sp.GetRequiredService<IOptions<TImplementation>>().Value);
+            }
+            else
+            {
+                services.AddScoped<TInterface>(sp =>
+                    sp.GetRequiredService<IOptions<TImplementation>>().Value);
+            }
+
             return settings;
         }
 
@@ -40,8 +53,7 @@ namespace CodingChainApi.Infrastructure
             IConfiguration configuration)
         {
             // RabbitMQ
-            serviceCollection.AddSingleton<IRabbitMqPublisher, RabbitMqBasePublisher>();
-            ConfigureInjectableSettings<IRabbitMqSettings, RabbitMqSettings>(serviceCollection, configuration);
+            ConfigureInjectableSettings<IRabbitMqSettings, RabbitMqSettings>(serviceCollection, configuration, true);
             // End RabbitMQ Configuration
         }
     }
