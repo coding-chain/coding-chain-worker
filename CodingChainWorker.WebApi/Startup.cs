@@ -16,6 +16,7 @@ using Microsoft.Extensions.Hosting;
 using CodingChainApi.Controllers;
 using CodingChainApi.Services;
 using CodingChainApi.Services.Code;
+using CodingChainApi.Services.Messaging;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using ZymLabs.NSwag.FluentValidation;
@@ -49,6 +50,7 @@ namespace CodingChainApi
             
             //RabbitMQ
             services.AddHostedService<ParticipationPendingExecutionListenerService>();
+            services.AddHostedService<PlagiarismExecutionListenerService>();
             //
 
 

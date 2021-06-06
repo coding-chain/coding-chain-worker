@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Application.Contracts.IService;
 using Application.Contracts.Processes;
+using Domain.Plagiarism;
 using Domain.TestExecution;
 using Domain.TestExecution.OOP.CSharp;
 using MediatR;
@@ -26,10 +27,12 @@ namespace Application.Write
     public class RunParticipationTestsHandler : INotificationHandler<RunParticipationTestsCommand>
     {
         private readonly IServiceProvider _serviceProvider;
+        private readonly IPlagiarismSettings _plagiarismSettings;
 
-        public RunParticipationTestsHandler(IServiceProvider serviceProvider)
+        public RunParticipationTestsHandler(IServiceProvider serviceProvider, IPlagiarismSettings plagiarismSettings)
         {
             _serviceProvider = serviceProvider;
+            _plagiarismSettings = plagiarismSettings;
         }
 
         public async Task Handle(RunParticipationTestsCommand request, CancellationToken cancellationToken)

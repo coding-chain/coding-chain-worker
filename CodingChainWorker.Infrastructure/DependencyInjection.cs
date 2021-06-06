@@ -21,6 +21,7 @@ namespace CodingChainApi.Infrastructure
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
             services.AddScoped<IProcessService<CSharpParticipationTestingAggregate>, CsharpProcessService>();
             services.AddScoped<IParticipationDoneService, ParticipationDoneResponseService>();
+            services.AddScoped<IPlagiarismDoneService, PlagiarismDoneResponseService>();
             services.AddScoped<IDirectoryService, DirectoryService>();
             ConfigureInjectableSettings<IAppDataSettings, AppDataSettings>(services, configuration);
             ConfigureInjectableSettings<IPlagiarismSettings, PlagiarismSettings>(services, configuration);
@@ -32,7 +33,7 @@ namespace CodingChainApi.Infrastructure
 
         private static TImplementation ConfigureInjectableSettings<TInterface, TImplementation>(
             IServiceCollection services,
-            IConfiguration configuration, bool singleton = false) where TImplementation : class, TInterface
+            IConfiguration configuration, bool singleton = true) where TImplementation : class, TInterface
             where TInterface : class
         {
             var settingsName = typeof(TImplementation).Name;

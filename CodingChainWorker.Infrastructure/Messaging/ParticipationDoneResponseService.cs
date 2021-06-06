@@ -8,13 +8,14 @@ namespace CodingChainApi.Infrastructure.Messaging
 {
     public class ParticipationDoneResponseService : RabbitMqBasePublisher, IParticipationDoneService
     {
-
-        public ParticipationDoneResponseService(IRabbitMqSettings settings, ILogger<ParticipationDoneResponseService> logger) : base(
+        public ParticipationDoneResponseService(IRabbitMqSettings settings,
+            ILogger<ParticipationDoneResponseService> logger) : base(
             settings, logger)
         {
             Exchange = settings.ParticipationExchange;
             RoutingKey = settings.DoneExecutionRoutingKey;
         }
+
         public void Dispatch(CodeProcessResponse processResponse)
         {
             PushMessage(processResponse);

@@ -12,7 +12,7 @@ namespace Domain.Plagiarism.Models
         {
             SimilarityRate = rate;
         }
-        double SimilarityRate { get; set; }
+        public double SimilarityRate { get; set; }
     }
 
     public class FunctionAggregate : Aggregate<FunctionId>
