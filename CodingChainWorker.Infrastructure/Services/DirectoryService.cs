@@ -10,7 +10,7 @@ namespace CodingChainApi.Infrastructure.Services
 {
     public interface IDirectoryService
     {
-        FileInfo GetTemplateDirectoryByParticipation(ParticipationAggregate participation);
+        FileInfo? GetTemplateDirectoryByParticipation(ParticipationAggregate participation);
         void DeleteParticipationDirectory(ParticipationAggregate participation);
     }
 
@@ -19,13 +19,21 @@ namespace CodingChainApi.Infrastructure.Services
         private readonly ITemplateSettings _templateSettings;
         private readonly IAppDataSettings _appDataSettings;
 
+        private string TemplateExtractParentDirectoryPath =>
+            Path.Join(_appDataSettings.BasePath, _appDataSettings.ParticipationTemplatesPath);
+
+        private string TemplateZipParentDirectoryPath =>
+            Path.Join(_appDataSettings.BasePath, _appDataSettings.TemplatesPath);
+
         public DirectoryService(ITemplateSettings templateSettings, IAppDataSettings appDataSettings)
         {
             _templateSettings = templateSettings;
             _appDataSettings = appDataSettings;
+            Directory.CreateDirectory(TemplateExtractParentDirectoryPath);
+            Directory.CreateDirectory(TemplateZipParentDirectoryPath);
         }
 
-        public FileInfo GetTemplateDirectoryByParticipation(ParticipationAggregate participation)
+        public FileInfo? GetTemplateDirectoryByParticipation(ParticipationAggregate participation)
         {
             var zipPath = GetZipPathByParticipation(participation);
             var extractDir = GetTemplateExtractPathByParticipation(participation);
@@ -33,16 +41,59 @@ namespace CodingChainApi.Infrastructure.Services
             {
                 return new FileInfo(extractDir);
             }
+
+            ClearDeleteFileFlag(extractDir);
             ZipFile.ExtractToDirectory(zipPath, extractDir);
+            if (ClearDeleteFileFlag(extractDir))
+            {
+                DeleteParticipationDirectoryWithoutDeleteFileFlag(participation, out var templatePath);
+                return null;
+            }
+
             return new FileInfo(extractDir);
+        }
+
+        private bool ClearDeleteFileFlag(string templateDirectoryPath)
+        {
+            var deleteFileFlagName = GetDeleteFileFlagName(templateDirectoryPath);
+            if (File.Exists(deleteFileFlagName))
+            {
+                File.Delete(deleteFileFlagName);
+                return true;
+            }
+
+            return false;
+        }
+
+        private string GetDeleteFileFlagName(string templateDirectoryPath)
+        {
+            return $"{templateDirectoryPath}.delete";
+        }
+
+        private void WriteDeleteFlagFile(string templateDirectoryPath)
+        {
+            File.Create(GetDeleteFileFlagName(templateDirectoryPath)).Close();
+        }
+
+        private bool DeleteParticipationDirectoryWithoutDeleteFileFlag(ParticipationAggregate participation,
+            out string templateDirectoryPath)
+        {
+            var dir = GetTemplateExtractPathByParticipation(participation);
+            templateDirectoryPath = dir;
+            if (Directory.Exists(dir))
+            {
+                Directory.Delete(dir, true);
+                return true;
+            }
+
+            return false;
         }
 
         public void DeleteParticipationDirectory(ParticipationAggregate participation)
         {
-            var dir =  GetTemplateExtractPathByParticipation(participation);
-            if (Directory.Exists(dir))
+            if (DeleteParticipationDirectoryWithoutDeleteFileFlag(participation, out var templateDirectoryPath))
             {
-                Directory.Delete(dir, true);
+                WriteDeleteFlagFile(templateDirectoryPath);
             }
         }
 
@@ -54,15 +105,15 @@ namespace CodingChainApi.Infrastructure.Services
             return templateSetting;
         }
 
+
         private string GetTemplateExtractPathByParticipation(ParticipationAggregate participation)
         {
-            return Path.GetFullPath(Path.Join(_appDataSettings.BasePath, _appDataSettings.ParticipationTemplatesPath,
-                participation.Id.Value.ToString()));
+            return Path.GetFullPath(Path.Join(TemplateExtractParentDirectoryPath, participation.Id.Value.ToString()));
         }
 
         private string GetZipPathByParticipation(ParticipationAggregate participation)
         {
-            return Path.GetFullPath(Path.Join(_appDataSettings.BasePath, _appDataSettings.TemplatesPath,
+            return Path.GetFullPath(Path.Join(TemplateZipParentDirectoryPath,
                 GetTemplateSettingsByLanguage(participation.Language).Name));
         }
     }
