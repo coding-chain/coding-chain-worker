@@ -40,7 +40,7 @@ namespace Application.PlagiarismAnalyze
             var codePlagiarismService = scope.ServiceProvider
                 .GetRequiredService<ICodePlagiarismService>();
             var donePlagiarismService = scope.ServiceProvider
-                .GetRequiredService<IPlagiarismDoneService>();
+                .GetRequiredService<IDispatcher<PlagiarismAnalyzeResponse>>();
 
 
             var suspectedFunction = new FunctionAggregate(new FunctionId(notification.SuspectedFunction.Id),

@@ -2,12 +2,11 @@ using Domain.TestExecution.Helpers;
 
 namespace Domain.TestExecution.OOP.CSharp
 {
-    public class NUnitTestsParser: IUnitTestsParser
+    public class NUnitTestsParser : IUnitTestsParser
     {
-
-        public bool FunctionPassed(string functionName, string testsResult)
+        public bool FunctionPassed(string functionName, string? output, string? error)
         {
-            return testsResult.Contains($"Passed {functionName}");
+            return output?.Contains($"Passed {functionName}") ?? false;
         }
     }
 }

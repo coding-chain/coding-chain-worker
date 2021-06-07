@@ -1,12 +1,15 @@
 ﻿using System.Reflection;
+using Application.Contracts;
 using Application.Contracts.IService;
-using CodingChainApi.Infrastructure.MessageBroker;
+using Application.Contracts.Processes;
+using Application.ParticipationExecution;
+using Application.PlagiarismAnalyze;
+using CodingChainApi.Infrastructure.Factories;
 using CodingChainApi.Infrastructure.Messaging;
 using CodingChainApi.Infrastructure.Services;
 using CodingChainApi.Infrastructure.Services.Processes;
 using CodingChainApi.Infrastructure.Settings;
 using Domain.Plagiarism;
-using Domain.TestExecution.OOP.CSharp;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -19,13 +22,16 @@ namespace CodingChainApi.Infrastructure
             IConfiguration configuration)
         {
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
-            services.AddScoped<IProcessService<CSharpParticipationTestingAggregate>, CsharpProcessService>();
-            services.AddScoped<IParticipationDoneService, ParticipationDoneResponseService>();
-            services.AddScoped<IPlagiarismDoneService, PlagiarismDoneResponseService>();
+            services.AddScoped<IProcessServiceFactory, ProcessServiceFactory>();
+            services.AddScoped<TypescriptProcessService>();
+            services.AddScoped<CsharpProcessService>();
+
             services.AddScoped<IDirectoryService, DirectoryService>();
             ConfigureInjectableSettings<IAppDataSettings, AppDataSettings>(services, configuration);
             ConfigureInjectableSettings<IPlagiarismSettings, PlagiarismSettings>(services, configuration);
             ConfigureInjectableSettings<ICSharpExecutionSettings, CSharpExecutionSettings>(services, configuration);
+            ConfigureInjectableSettings<ITypescriptExecutionSettings, TypescriptExecutionSettings>(services,
+                configuration);
             ConfigureInjectableSettings<ITemplateSettings, TemplateSettings>(services, configuration);
             ConfigureRabbitMqSettings(services, configuration);
             return services;
@@ -53,11 +59,14 @@ namespace CodingChainApi.Infrastructure
             return settings;
         }
 
-        private static void ConfigureRabbitMqSettings(IServiceCollection serviceCollection,
+        private static void ConfigureRabbitMqSettings(IServiceCollection services,
             IConfiguration configuration)
         {
+            services.AddScoped<IDispatcher<CodeProcessResponse>, ParticipationDoneResponseService>();
+            services.AddScoped<IDispatcher<PlagiarismAnalyzeResponse>, PlagiarismDoneResponseService>();
+            services.AddScoped<IDispatcher<PreparedParticipationResponse>, PreparedParticipationResponseService>();
             // RabbitMQ
-            ConfigureInjectableSettings<IRabbitMqSettings, RabbitMqSettings>(serviceCollection, configuration, true);
+            ConfigureInjectableSettings<IRabbitMqSettings, RabbitMqSettings>(services, configuration, true);
             // End RabbitMQ Configuration
         }
     }

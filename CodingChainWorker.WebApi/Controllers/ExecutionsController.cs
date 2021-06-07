@@ -1,5 +1,5 @@
 using System.Threading.Tasks;
-using Application.Write;
+using Application.ParticipationExecution;
 using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;

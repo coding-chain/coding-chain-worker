@@ -7,6 +7,8 @@ namespace CodingChainApi.Infrastructure.Settings
 
     public class CSharpExecutionSettings : ICSharpExecutionSettings
     {
-        public string BaseTestFileName {get;set;}
+        public string BaseTestFileName { get; set; }
     }
+
+
 }

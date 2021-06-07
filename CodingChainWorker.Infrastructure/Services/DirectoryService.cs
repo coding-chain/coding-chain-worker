@@ -10,8 +10,8 @@ namespace CodingChainApi.Infrastructure.Services
 {
     public interface IDirectoryService
     {
-        FileInfo GetTemplateDirectoryByParticipation(ParticipationTestingAggregate participation);
-        void DeleteParticipationDirectory(ParticipationTestingAggregate participation);
+        FileInfo GetTemplateDirectoryByParticipation(ParticipationAggregate participation);
+        void DeleteParticipationDirectory(ParticipationAggregate participation);
     }
 
     public class DirectoryService : IDirectoryService
@@ -25,19 +25,19 @@ namespace CodingChainApi.Infrastructure.Services
             _appDataSettings = appDataSettings;
         }
 
-        public FileInfo GetTemplateDirectoryByParticipation(ParticipationTestingAggregate participation)
+        public FileInfo GetTemplateDirectoryByParticipation(ParticipationAggregate participation)
         {
             var zipPath = GetZipPathByParticipation(participation);
             var extractDir = GetTemplateExtractPathByParticipation(participation);
             if (Directory.Exists(extractDir))
             {
-                Directory.Delete(extractDir, true);
+                return new FileInfo(extractDir);
             }
             ZipFile.ExtractToDirectory(zipPath, extractDir);
             return new FileInfo(extractDir);
         }
 
-        public void DeleteParticipationDirectory(ParticipationTestingAggregate participation)
+        public void DeleteParticipationDirectory(ParticipationAggregate participation)
         {
             var dir =  GetTemplateExtractPathByParticipation(participation);
             if (Directory.Exists(dir))
@@ -54,13 +54,13 @@ namespace CodingChainApi.Infrastructure.Services
             return templateSetting;
         }
 
-        private string GetTemplateExtractPathByParticipation(ParticipationTestingAggregate participation)
+        private string GetTemplateExtractPathByParticipation(ParticipationAggregate participation)
         {
             return Path.GetFullPath(Path.Join(_appDataSettings.BasePath, _appDataSettings.ParticipationTemplatesPath,
                 participation.Id.Value.ToString()));
         }
 
-        private string GetZipPathByParticipation(ParticipationTestingAggregate participation)
+        private string GetZipPathByParticipation(ParticipationAggregate participation)
         {
             return Path.GetFullPath(Path.Join(_appDataSettings.BasePath, _appDataSettings.TemplatesPath,
                 GetTemplateSettingsByLanguage(participation.Language).Name));
