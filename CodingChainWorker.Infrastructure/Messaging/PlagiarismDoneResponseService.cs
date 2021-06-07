@@ -11,8 +11,8 @@ namespace CodingChainApi.Infrastructure.Messaging
             : base(
                 settings, logger)
         {
-            Exchange = settings.ParticipationExchange;
-            RoutingKey = settings.DoneExecutionRoutingKey;
+            Exchange = settings.PlagiarismExchange;
+            RoutingKey = settings.PlagiarismAnalyzeDoneRoutingKey;
         }
 
         public void Dispatch(PlagiarismAnalyzeResponse plagiarismResponse)
