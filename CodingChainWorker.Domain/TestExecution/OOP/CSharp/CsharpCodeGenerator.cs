@@ -7,29 +7,26 @@ using Domain.TestExecution.Helpers;
 
 namespace Domain.TestExecution.OOP.CSharp
 {
-    public class CsharpCodeGenerator : ICodeGenerator
+    public class CsharpCodeGenerator : CodeGenerator<OoFunction>
     {
-        public string GetTestNameByOrder(int order) => $"{TestPrefix}{order}";
-        public IReadOnlyCollection<ITest> Tests => _tests.AsReadOnly();
-        public IReadOnlyCollection<FunctionBase> Functions => _functions.ToList().AsReadOnly();
-        public string TestPrefix => "Test";
-        private List<OoTest> _tests;
-        private SortedSet<OoFunction> _functions;
+        public override string GetTestNameByOrder(int order) => $"{TestPrefix}{order}";
+        public override string TestPrefix => "Test";
         private ICodeAnalyzer _analyzer;
         private string _headerCode;
-
-        
+        protected override string CustomHeader => new StringBuilder("using NUnit.Framework;")
+            .Append(_headerCode)
+            .ToString();
 
         public CsharpCodeGenerator(IList<TestEntity> tests, IList<FunctionEntity> functions, ICodeAnalyzer analyzer,
-            string headerCode)
+            string? headerCode)
         {
             _analyzer = analyzer;
-            _headerCode = headerCode;
-            _functions = new SortedSet<OoFunction>(functions.Select(ToOoFunction));
-            _tests = tests.Select(ToOoTest).ToList();
+            _headerCode = headerCode ?? "";
+            SortedFunctions = new SortedSet<OoFunction>(functions.Select(ToOoFunction));
+            TestsList = tests.Select(ToOoTest).ToList();
         }
 
-        public string ToStaticClass(string code, string className)
+        private string ToStaticClass(string code, string className)
         {
             return $@"
              public static class {className} {{
@@ -37,7 +34,7 @@ namespace Domain.TestExecution.OOP.CSharp
              }}";
         }
 
-        public string GetClassName(string name, int order) => $"{name}{order}";
+        private string GetClassName(string name, int order) => $"{name}{order}";
 
         private OoFunction ToOoFunction(FunctionEntity func)
         {
@@ -47,7 +44,7 @@ namespace Domain.TestExecution.OOP.CSharp
             return new OoFunction(ToStaticClass(func.Code, className), func.Order, funcName, className, func.Id);
         }
 
-        private OoTest ToOoTest(TestEntity test, int order)
+        private Test<OoFunction> ToOoTest(TestEntity test, int order)
         {
             var outClassName = GetClassName("OutputValidator", order);
             var inClassName = GetClassName("InputGenerator", order);
@@ -61,77 +58,24 @@ namespace Domain.TestExecution.OOP.CSharp
                 inMethodName, inClassName);
             var outFunc = new OoFunction(ToStaticClass(test.OutputValidator, outClassName), order,
                 outMethodName, outClassName);
-            return new OoTest(inFunc, outFunc, test.Id, GetTestNameByOrder(order));
+            return new Test<OoFunction>(inFunc, outFunc, test.Id, GetTestNameByOrder(order));
         }
 
-        public string GetExecutableCode()
+
+        protected override string GetFormattedTestsBlock(string content)
         {
-            var builder = new StringBuilder();
-            builder.AppendLine("using NUnit.Framework;");
-            builder.AppendLine(_headerCode);
-            builder.AppendLine(CreateFunctionDeclarations());
-            builder.AppendLine(CreateTestClass());
-            var res = builder.ToString();
-            return res;
+            return @$"public class Tests {{
+            {content}
+              }}";
         }
 
-        public string CreateTestFunction(OoTest test)
+        protected override string GetFormattedTestContent(Test<OoFunction> test, string testContent)
         {
-            var builder = new StringBuilder();
-            builder.AppendLine($@"
-            [Test]
+            return @$"[Test]
             public void {test.Name}(){{
-                Assert.True({CreatePipeline(test)});
-            }}");
-            return builder.ToString();
+                Assert.True({testContent});
+            }}";
         }
 
-        public string CreatePipeline(OoTest test)
-        {
-            var builder = new StringBuilder();
-            var allFunctions = new List<OoFunction>() {test.OoInFunc};
-            allFunctions.AddRange(_functions);
-            allFunctions.Add(test.OoOutFunc);
-            builder.Append(GetFunctionCall(new Stack<OoFunction>(allFunctions)));
-
-            return builder.ToString();
-        }
-
-        private string GetFunctionCall(Stack<OoFunction> functionsStack)
-        {
-            if (functionsStack.Count == 0) return "";
-            var function = functionsStack.Pop();
-            return function.FunctionCall(GetFunctionCall(functionsStack));
-        }
-
-        public string CreateTestClass()
-        {
-            var builder = new StringBuilder();
-            builder.AppendLine("public class Tests {");
-            for (var i = 0; i < _tests.Count; i++)
-            {
-                builder.AppendLine(CreateTestFunction(_tests[i]));
-            }
-
-            builder.AppendLine("}");
-            return builder.ToString();
-        }
-
-        public string CreateFunctionDeclarations()
-        {
-            var builder = new StringBuilder();
-            foreach (var sortedFunction in _functions)
-            {
-                builder.Append(sortedFunction.Code);
-            }
-
-            foreach (var ooTest in _tests)
-            {
-                builder.AppendLine(ooTest.InFunc.Code);
-                builder.AppendLine(ooTest.OutFunc.Code);
-            }
-
-            return builder.ToString();
-        }
     }
 }

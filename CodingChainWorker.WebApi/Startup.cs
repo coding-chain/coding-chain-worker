@@ -50,6 +50,8 @@ namespace CodingChainApi
             
             //RabbitMQ
             services.AddHostedService<ParticipationPendingExecutionListenerService>();
+            services.AddHostedService<PrepareParticipationExecutionListenerService>();
+            services.AddHostedService<CleanParticipationExecutionListenerService>();
             services.AddHostedService<PlagiarismExecutionListenerService>();
             //
 

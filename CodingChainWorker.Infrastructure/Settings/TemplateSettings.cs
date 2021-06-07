@@ -7,6 +7,8 @@ namespace CodingChainApi.Infrastructure.Settings
     {
         public LanguageEnum Language { get; set; }
         public string Name { get; set; }
+
+        public bool IsCompressed { get; set; } 
     }
 
     public interface ITemplateSettings

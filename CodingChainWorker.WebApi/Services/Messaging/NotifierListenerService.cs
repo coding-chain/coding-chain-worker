@@ -20,6 +20,9 @@ namespace CodingChainApi.Services.Code
 
         public override bool Process(string message)
         {
+            Logger.LogInformation(
+                "RabbitListener message received on , exchange: {Exchange}, routeKey:{RoutingKey}",
+                Exchange, RoutingKey);
             try
             {
                 var json = JObject.Parse(message);

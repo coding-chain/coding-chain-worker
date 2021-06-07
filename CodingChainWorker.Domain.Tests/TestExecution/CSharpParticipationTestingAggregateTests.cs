@@ -9,7 +9,7 @@ namespace CodingChainWorker.Domain.Tests.TestExecution
 {
     public class CSharpParticipationTestingAggregateTests
     {
-        private ParticipationTestingAggregate _participationTestingAggregate;
+        private CSharpParticipationAggregate _participationAggregate;
 
 
         private string GetTestHeaderCode() => @"using System;";
@@ -19,7 +19,7 @@ namespace CodingChainWorker.Domain.Tests.TestExecution
         [SetUp]
         public void Setup()
         {
-            _participationTestingAggregate = new CSharpParticipationTestingAggregate(
+            _participationAggregate = new CSharpParticipationAggregate(
                 new ParticipationId(Guid.NewGuid()),
                 LanguageEnum.CSharp,
                 GetTestHeaderCode(),
@@ -44,7 +44,7 @@ namespace CodingChainWorker.Domain.Tests.TestExecution
         [Test]
         public void get_executable_code_should_works()
         {
-            var res = _participationTestingAggregate.GetExecutableCode();
+            var res = _participationAggregate.GetExecutableCode();
             Assert.IsNotEmpty(res);
         }
     }

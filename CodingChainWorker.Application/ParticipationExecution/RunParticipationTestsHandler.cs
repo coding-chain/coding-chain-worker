@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Application.Contracts;
 using Application.Contracts.IService;
 using Application.Contracts.Processes;
 using Domain.Plagiarism;
@@ -10,10 +11,9 @@ using Domain.TestExecution;
 using Domain.TestExecution.OOP.CSharp;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using Microsoft.Extensions.Logging;
 
-namespace Application.Write
+namespace Application.ParticipationExecution
 {
     public record RunParticipationTestsCommand(Guid Id, LanguageEnum Language, string HeaderCode,
         IList<RunParticipationTestsCommand.Test> Tests,
@@ -27,29 +27,24 @@ namespace Application.Write
     public class RunParticipationTestsHandler : INotificationHandler<RunParticipationTestsCommand>
     {
         private readonly IServiceProvider _serviceProvider;
-        private readonly IPlagiarismSettings _plagiarismSettings;
 
-        public RunParticipationTestsHandler(IServiceProvider serviceProvider, IPlagiarismSettings plagiarismSettings)
+
+        public RunParticipationTestsHandler(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
-            _plagiarismSettings = plagiarismSettings;
         }
 
         public async Task Handle(RunParticipationTestsCommand request, CancellationToken cancellationToken)
         {
             using var scope = _serviceProvider.CreateScope();
             var processService = scope.ServiceProvider
-                .GetRequiredService<IProcessService<CSharpParticipationTestingAggregate>>();
-            var executionResponseService = scope.ServiceProvider.GetRequiredService<IParticipationDoneService>();
+                .GetRequiredService<IProcessServiceFactory>().GetProcessServiceByLanguage(request.Language);
+            var executionResponseService = scope.ServiceProvider.GetRequiredService<IDispatcher<CodeProcessResponse>>();
             try
             {
-                var execution = new CSharpParticipationTestingAggregate(
-                    new ParticipationId(request.Id),
-                    request.Language,
-                    request.HeaderCode,
-                    request.Functions.Select(f => new FunctionEntity(f.Code, f.Order, new FunctionId(f.Id))).ToList(),
-                    request.Tests.Select(t => new TestEntity(new TestId(t.Id), t.OutputValidator, t.InputGenerator))
-                        .ToList());
+                var execution =
+                    ParticipationAggregateFactory.GetParticipationAggregateByLanguage(request.Id, request.Language,
+                        request.Tests, request.Functions, request.HeaderCode);
 
                 await processService.WriteAndExecuteParticipation(execution);
                 execution.ParseResult();
