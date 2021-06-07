@@ -23,7 +23,7 @@ namespace CodingChainApi.Infrastructure.Messaging
             : base(
                 settings, logger)
         {
-            Exchange = settings.ParticipationExchange;
+            Exchange = settings.PlagiarismExchange;
             RoutingKey = settings.DoneExecutionRoutingKey;
         }
     }
