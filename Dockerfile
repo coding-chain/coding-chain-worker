@@ -8,6 +8,10 @@ FROM build AS publish
 RUN dotnet publish "CodingChainWorker.WebApi/CodingChainWorker.WebApi.csproj" -c Release -o /app/publish
 
 FROM mcr.microsoft.com/dotnet/aspnet:5.0 AS final
+RUN apt-get update -yq \
+    && apt-get install curl gnupg -yq \
+    && curl -sL https://deb.nodesource.com/setup_14.x | bash \
+    && apt-get install nodejs -yq
 EXPOSE 443 80
 ENV  ASPNETCORE_ENVIRONMENT=Development ASPNETCORE_URLS=https://+:443;http://+:80
 USER root

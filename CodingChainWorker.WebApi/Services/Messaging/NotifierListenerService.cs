@@ -2,6 +2,7 @@
 using CodingChainApi.Infrastructure.Messaging;
 using CodingChainApi.Infrastructure.Settings;
 using MediatR;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -10,12 +11,12 @@ namespace CodingChainApi.Services.Messaging
 {
     public abstract class NotifierListenerService<TCommand> : RabbitMqBaseListener where TCommand : INotification
     {
-        private readonly IPublisher _mediator;
+        private readonly IServiceProvider _serviceProvider;
 
         protected NotifierListenerService(IRabbitMqSettings settings, ILogger<NotifierListenerService<TCommand>> logger,
-            IPublisher mediator) : base(settings, logger)
+            IServiceProvider serviceProvider) : base(settings, logger)
         {
-            _mediator = mediator;
+            _serviceProvider = serviceProvider;
         }
 
         public override bool Process(string message)
@@ -25,6 +26,8 @@ namespace CodingChainApi.Services.Messaging
                 Exchange, RoutingKey);
             try
             {
+                using var scope = _serviceProvider.CreateScope();
+                var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
                 var json = JObject.Parse(message);
                 var runParticipation = JsonConvert.DeserializeObject<TCommand>(json.ToString());
                 if (runParticipation is null)
@@ -33,7 +36,7 @@ namespace CodingChainApi.Services.Messaging
                     return false;
                 }
 
-                _mediator.Publish(runParticipation);
+                mediator.Publish(runParticipation);
                 return true;
             }
             catch (Exception ex)
