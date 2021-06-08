@@ -37,6 +37,7 @@ namespace CodingChainApi.Services.Messaging
         {
             Exchange = settings.ParticipationExchange;
             RoutingKey = settings.PrepareExecutionRoutingKey;
+            
         }
     }
 
