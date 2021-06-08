@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Domain.Exceptions;
 using Domain.TestExecution.Helpers;
 
@@ -10,7 +9,6 @@ namespace Domain.TestExecution.Imperative.Typescript
     {
         private readonly ICodeAnalyzer _analyzer;
         private readonly string _headerCode;
-        public override string TestPrefix => "test";
 
         public TypescriptCodeGenerator(IList<TestEntity> tests, IList<FunctionEntity> functions, ICodeAnalyzer analyzer,
             string? headerCode)
@@ -21,7 +19,12 @@ namespace Domain.TestExecution.Imperative.Typescript
             TestsList = tests.Select(ToImperativeTest).ToList();
         }
 
-        private string GetFunctionName(string name, int order) => $"{name}{order}";
+        public override string TestPrefix => "test";
+
+        private string GetFunctionName(string name, int order)
+        {
+            return $"{name}{order}";
+        }
 
         private ImperativeFunction ToImperativeFunction(FunctionEntity function)
         {
@@ -64,6 +67,9 @@ namespace Domain.TestExecution.Imperative.Typescript
             }});";
         }
 
-        public override string GetTestNameByOrder(int order) => $"test{order}";
+        public override string GetTestNameByOrder(int order)
+        {
+            return $"test{order}";
+        }
     }
 }

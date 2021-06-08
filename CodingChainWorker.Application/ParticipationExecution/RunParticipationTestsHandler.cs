@@ -3,15 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Application.Contracts;
+using Application.Contracts.Factories;
 using Application.Contracts.IService;
 using Application.Contracts.Processes;
-using Domain.Plagiarism;
 using Domain.TestExecution;
-using Domain.TestExecution.OOP.CSharp;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 
 namespace Application.ParticipationExecution
 {

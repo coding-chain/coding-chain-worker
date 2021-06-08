@@ -4,6 +4,7 @@ namespace CodingChainApi.Infrastructure.Settings
     {
         string BaseTestFileName { get; set; }
     }
+
     public class TypescriptExecutionSettings : ITypescriptExecutionSettings
     {
         public string BaseTestFileName { get; set; }

@@ -1,10 +1,12 @@
-using System;
-
 namespace CodingChainApi.Infrastructure.Common.Data
 {
     public interface ICodePlagiarismAnalysisData
     {
-        public const double THRESHOLD = 0.6;
+        public enum BROAD_CONFIG
+        {
+            SAMPLING_THRESHOLD = 8,
+            K_GRAM_LENGTH = 5
+        }
 
         public enum NARROW_CONFIG
         {
@@ -12,10 +14,6 @@ namespace CodingChainApi.Infrastructure.Common.Data
             K_GRAM_LENGTH = 3
         }
 
-        public enum BROAD_CONFIG
-        {
-            SAMPLING_THRESHOLD = 8,
-            K_GRAM_LENGTH = 5
-        }
+        public const double THRESHOLD = 0.6;
     }
 }

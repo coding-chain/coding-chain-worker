@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using CodingChainApi.Infrastructure.Common.Exceptions;
@@ -16,14 +15,8 @@ namespace CodingChainApi.Infrastructure.Services
 
     public class DirectoryService : IDirectoryService
     {
-        private readonly ITemplateSettings _templateSettings;
         private readonly IAppDataSettings _appDataSettings;
-
-        private string TemplateExtractParentDirectoryPath =>
-            Path.Join(_appDataSettings.BasePath, _appDataSettings.ParticipationTemplatesPath);
-
-        private string TemplateZipParentDirectoryPath =>
-            Path.Join(_appDataSettings.BasePath, _appDataSettings.TemplatesPath);
+        private readonly ITemplateSettings _templateSettings;
 
         public DirectoryService(ITemplateSettings templateSettings, IAppDataSettings appDataSettings)
         {
@@ -33,14 +26,17 @@ namespace CodingChainApi.Infrastructure.Services
             Directory.CreateDirectory(TemplateZipParentDirectoryPath);
         }
 
+        private string TemplateExtractParentDirectoryPath =>
+            Path.Join(_appDataSettings.BasePath, _appDataSettings.ParticipationTemplatesPath);
+
+        private string TemplateZipParentDirectoryPath =>
+            Path.Join(_appDataSettings.BasePath, _appDataSettings.TemplatesPath);
+
         public FileInfo? GetTemplateDirectoryByParticipation(ParticipationAggregate participation)
         {
             var zipPath = GetZipPathByParticipation(participation);
             var extractDir = GetTemplateExtractPathByParticipation(participation);
-            if (Directory.Exists(extractDir))
-            {
-                return new FileInfo(extractDir);
-            }
+            if (Directory.Exists(extractDir)) return new FileInfo(extractDir);
 
             ClearDeleteFileFlag(extractDir);
             ZipFile.ExtractToDirectory(zipPath, extractDir);
@@ -51,6 +47,12 @@ namespace CodingChainApi.Infrastructure.Services
             }
 
             return new FileInfo(extractDir);
+        }
+
+        public void DeleteParticipationDirectory(ParticipationAggregate participation)
+        {
+            if (DeleteParticipationDirectoryWithoutDeleteFileFlag(participation, out var templateDirectoryPath))
+                WriteDeleteFlagFile(templateDirectoryPath);
         }
 
         private bool ClearDeleteFileFlag(string templateDirectoryPath)
@@ -87,14 +89,6 @@ namespace CodingChainApi.Infrastructure.Services
             }
 
             return false;
-        }
-
-        public void DeleteParticipationDirectory(ParticipationAggregate participation)
-        {
-            if (DeleteParticipationDirectoryWithoutDeleteFileFlag(participation, out var templateDirectoryPath))
-            {
-                WriteDeleteFlagFile(templateDirectoryPath);
-            }
         }
 
         private TemplateSetting GetTemplateSettingsByLanguage(LanguageEnum language)

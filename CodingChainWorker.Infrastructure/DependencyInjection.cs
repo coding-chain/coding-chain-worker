@@ -1,5 +1,5 @@
 ﻿using System.Reflection;
-using Application.Contracts;
+using Application.Contracts.Factories;
 using Application.Contracts.IService;
 using Application.Contracts.Processes;
 using Application.ParticipationExecution;
@@ -46,15 +46,11 @@ namespace CodingChainApi.Infrastructure
             var settings = configuration.GetSection(settingsName).Get<TImplementation>();
             services.Configure<TImplementation>(configuration.GetSection(settingsName));
             if (singleton)
-            {
                 services.AddSingleton<TInterface>(sp =>
                     sp.GetRequiredService<IOptions<TImplementation>>().Value);
-            }
             else
-            {
                 services.AddScoped<TInterface>(sp =>
                     sp.GetRequiredService<IOptions<TImplementation>>().Value);
-            }
 
             return settings;
         }
@@ -66,7 +62,7 @@ namespace CodingChainApi.Infrastructure
             services.AddScoped<IDispatcher<PlagiarismAnalyzeResponse>, PlagiarismDoneResponseService>();
             services.AddScoped<IDispatcher<PreparedParticipationResponse>, PreparedParticipationResponseService>();
             // RabbitMQ
-            ConfigureInjectableSettings<IRabbitMqSettings, RabbitMqSettings>(services, configuration, true);
+            ConfigureInjectableSettings<IRabbitMqSettings, RabbitMqSettings>(services, configuration);
             // End RabbitMQ Configuration
         }
     }

@@ -7,7 +7,6 @@ using Application.Contracts.IService;
 using Domain.Plagiarism;
 using Domain.Plagiarism.Models;
 using Domain.TestExecution;
-using Domain.TestExecution.OOP.CSharp;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -25,8 +24,8 @@ namespace Application.PlagiarismAnalyze
 
     public class PlagiarismAnalyzeHandler : INotificationHandler<PlagiarismAnalyzeNotification>
     {
-        private readonly IServiceProvider _serviceProvider;
         private readonly IPlagiarismSettings _plagiarismSettings;
+        private readonly IServiceProvider _serviceProvider;
 
         public PlagiarismAnalyzeHandler(IServiceProvider serviceProvider, IPlagiarismSettings plagiarismSettings)
         {

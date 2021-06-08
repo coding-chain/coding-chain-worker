@@ -12,9 +12,20 @@ namespace CodingChainWorker.Domain.Tests.TestExecution
         private CSharpParticipationAggregate _participationAggregate;
 
 
-        private string GetTestHeaderCode() => @"using System;";
-        private TestId GetTestId() => new TestId(Guid.NewGuid());
-        private FunctionId GetFunctionId() => new FunctionId(Guid.NewGuid());
+        private string GetTestHeaderCode()
+        {
+            return @"using System;";
+        }
+
+        private TestId GetTestId()
+        {
+            return new(Guid.NewGuid());
+        }
+
+        private FunctionId GetFunctionId()
+        {
+            return new(Guid.NewGuid());
+        }
 
         [SetUp]
         public void Setup()
@@ -23,12 +34,12 @@ namespace CodingChainWorker.Domain.Tests.TestExecution
                 new ParticipationId(Guid.NewGuid()),
                 LanguageEnum.CSharp,
                 GetTestHeaderCode(),
-                new List<FunctionEntity>()
+                new List<FunctionEntity>
                 {
                     new(FunctionsTestHelper.GetTestFunctionCode("test", 2, "string"), 2, GetFunctionId()),
                     new(FunctionsTestHelper.GetTestFunctionCode("test", 1, "string"), 1, GetFunctionId())
                 },
-                new List<TestEntity>()
+                new List<TestEntity>
                 {
                     new(GetTestId(),
                         FunctionsTestHelper.GetTestFunctionCode("test", 1, "string", "bool", @"return ""test""==test;"),

@@ -18,9 +18,9 @@ namespace CodingChainWorker.Domain.Tests.TestExecution
         [Test]
         public void constructor_should_throw_on_function_without_method_name()
         {
-            var invalidFunctions = new List<FunctionEntity>()
+            var invalidFunctions = new List<FunctionEntity>
             {
-                new FunctionEntity(FunctionsTestHelper.GetTestFunctionCode(null, null), 1,
+                new(FunctionsTestHelper.GetTestFunctionCode(null, null), 1,
                     new FunctionId(Guid.NewGuid()))
             };
             Assert.Throws<DomainException>(() =>
@@ -34,9 +34,9 @@ namespace CodingChainWorker.Domain.Tests.TestExecution
             var outVal = FunctionsTestHelper.GetTestFunctionCode("outputValidator", null, "string", "bool",
                 @"return test == ""test"";");
 
-            var invalidInputTest = new List<TestEntity>()
+            var invalidInputTest = new List<TestEntity>
             {
-                new TestEntity(new TestId(Guid.NewGuid()), outVal, inGen)
+                new(new TestId(Guid.NewGuid()), outVal, inGen)
             };
             Assert.Throws<DomainException>(() =>
                 new CsharpCodeGenerator(invalidInputTest, new List<FunctionEntity>(), new CsharpCodeAnalyzer(), ""));
@@ -50,7 +50,7 @@ namespace CodingChainWorker.Domain.Tests.TestExecution
             var inGen =
                 FunctionsTestHelper.GetTestFunctionCode("inputGenerator", null, null, "string", @"return  ""input"";");
 
-            var invalidInputTest = new List<TestEntity>()
+            var invalidInputTest = new List<TestEntity>
             {
                 new(new TestId(Guid.NewGuid()), outVal, inGen)
             };

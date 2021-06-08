@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
+using CodingChainApi.Services;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using CodingChainApi.Services;
 
 namespace CodingChainApi.Controllers
 {
@@ -21,6 +21,5 @@ namespace CodingChainApi.Controllers
             Mapper = mapper;
             PropertyCheckerService = propertyCheckerService;
         }
-
     }
 }

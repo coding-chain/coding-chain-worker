@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using Domain.TestExecution.Helpers;
-using Domain.TestExecution.OOP.CSharp;
 
 namespace Domain.TestExecution.Imperative.Typescript
 {

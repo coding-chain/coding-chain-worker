@@ -4,8 +4,8 @@ namespace Domain.Plagiarism.Models
 {
     public class PlagiarizedFunction
     {
-        private Guid _plagiarizeFunctionId;
         private Guid _functionCompared;
+        private Guid _plagiarizeFunctionId;
         private string _rate;
 
         public PlagiarizedFunction(Guid functionCompared, Guid plagiarizeFunctionId, string rate)

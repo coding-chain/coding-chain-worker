@@ -27,15 +27,16 @@ namespace CodingChainApi.Infrastructure.Messaging
             RoutingKey = settings.DoneExecutionRoutingKey;
         }
     }
+
     public class PreparedParticipationResponseService : BaseDispatcherService<PreparedParticipationResponse>
     {
-        public PreparedParticipationResponseService(IRabbitMqSettings settings, ILogger<PreparedParticipationResponseService> logger)
+        public PreparedParticipationResponseService(IRabbitMqSettings settings,
+            ILogger<PreparedParticipationResponseService> logger)
             : base(
                 settings, logger)
         {
             Exchange = settings.ParticipationExchange;
             RoutingKey = settings.PreparedExecutionRoutingKey;
         }
-    
     }
 }

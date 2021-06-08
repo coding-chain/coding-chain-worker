@@ -1,7 +1,7 @@
 ﻿using Application.Contracts.IService;
 using Domain.TestExecution;
 
-namespace Application.Contracts
+namespace Application.Contracts.Factories
 {
     public interface IProcessServiceFactory
     {

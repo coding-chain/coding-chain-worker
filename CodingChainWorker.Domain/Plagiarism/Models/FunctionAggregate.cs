@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Domain.Contracts;
@@ -12,19 +11,21 @@ namespace Domain.Plagiarism.Models
         {
             SimilarityRate = rate;
         }
+
         public double SimilarityRate { get; set; }
     }
 
     public class FunctionAggregate : Aggregate<FunctionId>
     {
-        public string Code;
-        public IReadOnlyCollection<SimilarFunction> SimilarFunctions => _similarFunctionsIds.ToList().AsReadOnly();
         private readonly HashSet<SimilarFunction> _similarFunctionsIds = new();
+        public string Code;
 
         public FunctionAggregate(FunctionId id, string code) : base(id)
         {
             Code = code;
         }
+
+        public IReadOnlyCollection<SimilarFunction> SimilarFunctions => _similarFunctionsIds.ToList().AsReadOnly();
 
         public void AddSimilarFunction(FunctionId functionId, double rate)
         {

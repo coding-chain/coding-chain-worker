@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
 using Application.Common.Pagination;
 
 namespace CodingChainApi.Helpers
@@ -12,9 +10,11 @@ namespace CodingChainApi.Helpers
                 page.HasPrevious, page.HasNext);
         }
     }
+
     public class PagedListResume
     {
-        public PagedListResume(long currentPage, long totalPages, long pageSize, long totalCount, bool hasPrevious, bool hasNext)
+        public PagedListResume(long currentPage, long totalPages, long pageSize, long totalCount, bool hasPrevious,
+            bool hasNext)
         {
             CurrentPage = currentPage;
             TotalPages = totalPages;
@@ -30,6 +30,5 @@ namespace CodingChainApi.Helpers
         public long TotalCount { get; }
         public bool HasPrevious { get; }
         public bool HasNext { get; }
-
     }
 }

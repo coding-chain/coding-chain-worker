@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Application.Contracts;
+using Application.Contracts.Factories;
 using Domain.TestExecution;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;

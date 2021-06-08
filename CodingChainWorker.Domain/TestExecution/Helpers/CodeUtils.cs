@@ -19,10 +19,7 @@
                     startScopeCharCnt++;
                 }
 
-                if (startScopeCharCnt == 0 && hasChanged)
-                {
-                    return i;
-                }
+                if (startScopeCharCnt == 0 && hasChanged) return i;
             }
 
             return -1;
@@ -45,10 +42,7 @@
                     endScopeCharCnt--;
                 }
 
-                if (endScopeCharCnt == 0 && hasChanged)
-                {
-                    return i;
-                }
+                if (endScopeCharCnt == 0 && hasChanged) return i;
             }
 
             return -1;

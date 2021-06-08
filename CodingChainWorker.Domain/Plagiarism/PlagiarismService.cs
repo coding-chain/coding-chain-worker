@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text.RegularExpressions;
-using CodingChainApi.Infrastructure.Utils;
+using Domain.Common;
 using Domain.Plagiarism.Models;
 
 namespace Domain.Plagiarism
@@ -19,18 +19,13 @@ namespace Domain.Plagiarism
             suspectedFunctionAggregate.Code = Regex.Replace(suspectedFunctionAggregate.Code, @"\s+", " ");
             foreach (var functionToCompare in functionsToCompare)
             {
-                if (functionToCompare.Id.Equals(suspectedFunctionAggregate.Id))
-                {
-                    continue;
-                }
+                if (functionToCompare.Id.Equals(suspectedFunctionAggregate.Id)) continue;
 
                 functionToCompare.Code = Regex.Replace(functionToCompare.Code, @"\s+", " ");
                 var averageSimilarity =
                     GetAverageSimilarityRate(suspectedFunctionAggregate.Code, functionToCompare.Code);
                 if (averageSimilarity > settings.Threshold)
-                {
                     suspectedFunctionAggregate.AddSimilarFunction(functionToCompare.Id, averageSimilarity);
-                }
             }
 
             return suspectedFunctionAggregate;
@@ -62,13 +57,11 @@ namespace Domain.Plagiarism
             {
                 string? tmpMin = null;
                 for (var j = i; j < i + w; j++)
-                {
                     if (tmpMin == null || rawFingerPrints[j].Length <= tmpMin.Length)
                     {
                         minIndex = j;
                         tmpMin = rawFingerPrints[j];
                     }
-                }
 
                 if (minIndex != preMinIndex)
                 {
@@ -83,7 +76,7 @@ namespace Domain.Plagiarism
         private List<string> ExtractFingerprints(string content, int k)
         {
             var fingerprints = new List<string>();
-            for (int i = 0; i < content.Length - k; i++)
+            for (var i = 0; i < content.Length - k; i++)
             {
                 string kgram = content.Substring(i, k);
                 string hash = HashUtils.GetHash(SHA256.Create(), kgram);
@@ -97,12 +90,8 @@ namespace Domain.Plagiarism
         {
             var intersections = new List<string>();
             foreach (var element in comparedList)
-            {
                 if (suspectedList.Contains(element))
-                {
                     intersections.Add(element);
-                }
-            }
 
             return intersections;
         }

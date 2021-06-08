@@ -2,6 +2,6 @@
 {
     public interface IUnitTestsParser
     {
-        public bool FunctionPassed(string functionName, string? output, string? error );
+        public bool FunctionPassed(string functionName, string? output, string? error);
     }
 }

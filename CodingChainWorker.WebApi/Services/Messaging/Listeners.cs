@@ -1,7 +1,6 @@
 ﻿using Application.ParticipationExecution;
 using Application.PlagiarismAnalyze;
 using CodingChainApi.Infrastructure.Settings;
-using CodingChainApi.Services.Code;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
@@ -17,7 +16,7 @@ namespace CodingChainApi.Services.Messaging
             RoutingKey = settings.PendingExecutionRoutingKey;
         }
     }
-    
+
     public class PlagiarismExecutionListenerService : NotifierListenerService<PlagiarismAnalyzeNotification>
     {
         public PlagiarismExecutionListenerService(IRabbitMqSettings settings,
@@ -28,7 +27,9 @@ namespace CodingChainApi.Services.Messaging
             RoutingKey = settings.PlagiarismAnalyzeExecutionRoutingKey;
         }
     }
-    public class PrepareParticipationExecutionListenerService : NotifierListenerService<PrepareParticipationSessionCommand>
+
+    public class
+        PrepareParticipationExecutionListenerService : NotifierListenerService<PrepareParticipationSessionCommand>
     {
         public PrepareParticipationExecutionListenerService(IRabbitMqSettings settings,
             ILogger<PrepareParticipationExecutionListenerService> logger, IPublisher mediator) : base(settings,
@@ -38,6 +39,7 @@ namespace CodingChainApi.Services.Messaging
             RoutingKey = settings.PrepareExecutionRoutingKey;
         }
     }
+
     public class CleanParticipationExecutionListenerService : NotifierListenerService<CleanParticipationSessionCommand>
     {
         public CleanParticipationExecutionListenerService(IRabbitMqSettings settings,

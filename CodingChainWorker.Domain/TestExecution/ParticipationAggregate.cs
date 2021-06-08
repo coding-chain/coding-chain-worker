@@ -1,14 +1,17 @@
 using System.Collections.Generic;
-using System.Runtime.Intrinsics.X86;
-using System.Text.RegularExpressions;
 using Domain.Contracts;
-using Domain.TestExecution.OOP;
 
 namespace Domain.TestExecution
 {
     public abstract class ParticipationAggregate : Aggregate<ParticipationId>
 
     {
+        protected ParticipationAggregate(ParticipationId id, LanguageEnum language, string? headerCode) : base(id)
+        {
+            Language = language;
+            HeaderCode = headerCode;
+        }
+
         public LanguageEnum Language { get; }
         public string? HeaderCode { get; }
 
@@ -17,6 +20,7 @@ namespace Domain.TestExecution
 
         public abstract IReadOnlyCollection<FunctionEntity> Functions { get; }
         public abstract IReadOnlyCollection<TestEntity> Tests { get; }
+
         public void AddOutput(string output)
         {
             Output ??= "";
@@ -29,16 +33,8 @@ namespace Domain.TestExecution
             Error += error;
         }
 
-
-        protected ParticipationAggregate(ParticipationId id, LanguageEnum language, string? headerCode) : base(id)
-        {
-            Language = language;
-            HeaderCode = headerCode;
-        }
-
         public abstract string GetExecutableCode();
 
         public abstract void ParseResult();
-       
     }
 }

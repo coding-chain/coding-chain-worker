@@ -8,17 +8,26 @@ namespace Domain.TestExecution.Helpers
     {
         protected SortedSet<TFunction> SortedFunctions { get; init; }
         protected List<Test<TFunction>> TestsList { get; init; }
+        protected virtual string? CustomHeader { get; } = null;
         public IReadOnlyCollection<Test<TFunction>> Tests => TestsList.AsReadOnly();
         public IReadOnlyCollection<FunctionBase> Functions => SortedFunctions.ToList().AsReadOnly();
-        protected virtual string? CustomHeader { get; } = null;
+
+        public string GetExecutableCode()
+        {
+            var builder = new StringBuilder();
+            builder.AppendLine(CustomHeader);
+            builder.AppendLine(CreateFunctionDeclarations());
+            builder.AppendLine(CreateTestsBlock());
+            return builder.ToString();
+        }
+
+        public abstract string GetTestNameByOrder(int order);
+        public abstract string TestPrefix { get; }
 
         protected string CreateFunctionDeclarations()
         {
             var builder = new StringBuilder();
-            foreach (var sortedFunction in Functions)
-            {
-                builder.Append(sortedFunction.Code);
-            }
+            foreach (var sortedFunction in Functions) builder.Append(sortedFunction.Code);
 
             foreach (var tests in Tests)
             {
@@ -32,7 +41,7 @@ namespace Domain.TestExecution.Helpers
         protected string CreatePipeline(Test<TFunction> test)
         {
             var builder = new StringBuilder();
-            var allFunctions = new List<TFunction>() {test.InFunc};
+            var allFunctions = new List<TFunction> {test.InFunc};
             allFunctions.AddRange(SortedFunctions);
             allFunctions.Add(test.OutFunc);
             builder.Append(GetFunctionCall(new Stack<TFunction>(allFunctions)));
@@ -57,10 +66,7 @@ namespace Domain.TestExecution.Helpers
         private string CreateTestsBlock()
         {
             var builder = new StringBuilder();
-            for (var i = 0; i < TestsList.Count; i++)
-            {
-                builder.AppendLine(CreateTestFunction(TestsList[i]));
-            }
+            for (var i = 0; i < TestsList.Count; i++) builder.AppendLine(CreateTestFunction(TestsList[i]));
 
             return new StringBuilder()
                 .AppendLine(GetFormattedTestsBlock(builder.ToString()))
@@ -70,16 +76,5 @@ namespace Domain.TestExecution.Helpers
         protected abstract string GetFormattedTestsBlock(string content);
 
         protected abstract string GetFormattedTestContent(Test<TFunction> test, string testContent);
-
-        public string GetExecutableCode()
-        {
-            var builder = new StringBuilder();
-            builder.AppendLine(CustomHeader);
-            builder.AppendLine(CreateFunctionDeclarations());
-            builder.AppendLine(CreateTestsBlock());
-            return builder.ToString();
-        }
-        public abstract string GetTestNameByOrder(int order);
-        public abstract string TestPrefix { get; }
     }
 }

@@ -5,6 +5,9 @@ namespace Domain.TestExecution
 {
     public record ParticipationId(Guid Value) : IEntityId
     {
-        public override string ToString() => Value.ToString();
+        public override string ToString()
+        {
+            return Value.ToString();
+        }
     }
 }

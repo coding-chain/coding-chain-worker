@@ -1,4 +1,3 @@
-using System.Linq;
 using Domain.TestExecution.Helpers;
 
 namespace Domain.TestExecution.Imperative.Typescript

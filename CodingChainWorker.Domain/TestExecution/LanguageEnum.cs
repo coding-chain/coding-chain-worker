@@ -2,6 +2,7 @@
 {
     public enum LanguageEnum
     {
-        CSharp, Typescript
+        CSharp,
+        Typescript
     }
 }

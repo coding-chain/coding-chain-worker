@@ -1,5 +1,3 @@
-using Domain.TestExecution.OOP;
-
 namespace Domain.TestExecution.Helpers
 {
     public class Test<TFunc> where TFunc : FunctionBase
@@ -12,11 +10,11 @@ namespace Domain.TestExecution.Helpers
             Name = name;
         }
 
-        public TFunc InFunc { get;  }
-        public TFunc OutFunc { get;  }
+        public TFunc InFunc { get; }
+        public TFunc OutFunc { get; }
 
-        public TestId Id { get;  }
+        public TestId Id { get; }
 
-        public string Name { get;  }
+        public string Name { get; }
     }
 }

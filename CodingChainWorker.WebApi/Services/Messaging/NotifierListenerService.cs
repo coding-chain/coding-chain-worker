@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace CodingChainApi.Services.Code
+namespace CodingChainApi.Services.Messaging
 {
     public abstract class NotifierListenerService<TCommand> : RabbitMqBaseListener where TCommand : INotification
     {

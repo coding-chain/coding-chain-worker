@@ -15,10 +15,10 @@ namespace CodingChainWorker.Domain.Tests.TestExecution
 
     public class PlagiarismProcessingServiceTests
     {
-        private PlagiarismService _plagiarismService;
-        private List<FunctionAggregate> _functionsToCompare;
-        private FunctionAggregate _suspectedFunctionAggregate;
         private IPlagiarismSettings _fakeSettings;
+        private List<FunctionAggregate> _functionsToCompare;
+        private PlagiarismService _plagiarismService;
+        private FunctionAggregate _suspectedFunctionAggregate;
 
 
         [SetUp]
@@ -32,10 +32,10 @@ namespace CodingChainWorker.Domain.Tests.TestExecution
             });
             _suspectedFunctionAggregate = new FunctionAggregate(new FunctionId(Guid.NewGuid()),
                 "var serviceProvider = new ServiceCollection().AddLogging().BuildServiceProvider();");
-            _fakeSettings = new PlagiarismSettingsFake()
+            _fakeSettings = new PlagiarismSettingsFake
             {
                 Threshold = 0.6,
-                Configurations = new List<ComparisonConfig>()
+                Configurations = new List<ComparisonConfig>
                 {
                     new() {SamplingWindow = 6, KGramLength = 3},
                     new() {SamplingWindow = 8, KGramLength = 5}
@@ -65,7 +65,7 @@ namespace CodingChainWorker.Domain.Tests.TestExecution
             var noPlagiarizedFunction = _suspectedFunctionAggregate;
             noPlagiarizedFunction.Code = "this is a very different code";
             var response = _plagiarismService.AnalyseCode(noPlagiarizedFunction, _functionsToCompare, _fakeSettings);
-            Assert.AreEqual(response.SimilarFunctions.Count== 0, true);
+            Assert.AreEqual(response.SimilarFunctions.Count == 0, true);
         }
     }
 }

@@ -3,7 +3,7 @@ using Domain.TestExecution.Helpers;
 
 namespace Domain.TestExecution.OOP.CSharp
 {
-    public class CsharpCodeAnalyzer: ICodeAnalyzer
+    public class CsharpCodeAnalyzer : ICodeAnalyzer
     {
         public string? FindFunctionName(string code)
         {
@@ -27,6 +27,7 @@ namespace Domain.TestExecution.OOP.CSharp
 
                 if (openBracketCnt == 0 && hasChanged) break;
             }
+
             code = code[..i];
             var res = Regex.Match(code, @"\b(\w+)$").Value;
             return res.Length > 0 ? res : null;

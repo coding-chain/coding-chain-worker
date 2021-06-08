@@ -1,5 +1,4 @@
 using System;
-using System.Text.RegularExpressions;
 using Domain.Contracts;
 
 namespace Domain.TestExecution
@@ -14,7 +13,7 @@ namespace Domain.TestExecution
 
     public class FunctionEntity : Entity<FunctionId>, IComparable<FunctionEntity>
     {
-        public FunctionEntity(string code,int order, FunctionId id) : base(id)
+        public FunctionEntity(string code, int order, FunctionId id) : base(id)
         {
             Order = order;
             Code = code;
@@ -28,7 +27,5 @@ namespace Domain.TestExecution
         {
             return Order.CompareTo(other?.Order);
         }
-
-
     }
 }

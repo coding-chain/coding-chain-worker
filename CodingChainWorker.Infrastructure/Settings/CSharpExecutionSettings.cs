@@ -9,6 +9,4 @@ namespace CodingChainApi.Infrastructure.Settings
     {
         public string BaseTestFileName { get; set; }
     }
-
-
 }

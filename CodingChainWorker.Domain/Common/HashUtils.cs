@@ -1,7 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 
-namespace CodingChainApi.Infrastructure.Utils
+namespace Domain.Common
 {
     public static class HashUtils
     {
@@ -16,10 +16,7 @@ namespace CodingChainApi.Infrastructure.Utils
 
             // Loop through each byte of the hashed data
             // and format each one as a hexadecimal string.
-            for (int i = 0; i < data.Length; i++)
-            {
-                sBuilder.Append(data[i].ToString(""));
-            }
+            for (var i = 0; i < data.Length; i++) sBuilder.Append(data[i].ToString(""));
 
             // Return the hexadecimal string.
             return sBuilder.ToString();

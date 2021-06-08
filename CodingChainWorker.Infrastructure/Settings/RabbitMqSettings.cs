@@ -2,10 +2,10 @@ namespace CodingChainApi.Infrastructure.Settings
 {
     public interface IRabbitMqSettings
     {
-        string RabbitHost { get; set; }
-        string RabbitUserName { get; set; }
-        string RabbitPassword { get; set; }
-        int RabbitPort { get; set; }
+        string Host { get; set; }
+        string Username { get; set; }
+        string Password { get; set; }
+        int Port { get; set; }
         string PendingExecutionRoutingKey { get; set; }
         string DoneExecutionRoutingKey { get; set; }
         string ParticipationExchange { get; set; }
@@ -13,18 +13,17 @@ namespace CodingChainApi.Infrastructure.Settings
         string PlagiarismExchange { get; set; }
         string PlagiarismAnalyzeExecutionRoutingKey { get; set; }
         string PlagiarismAnalyzeDoneRoutingKey { get; set; }
-        string PrepareExecutionRoutingKey {get;set;}
-        string CleanExecutionRoutingKey {get;set;}
+        string PrepareExecutionRoutingKey { get; set; }
+        string CleanExecutionRoutingKey { get; set; }
         string PreparedExecutionRoutingKey { get; set; }
-
     }
 
     public class RabbitMqSettings : IRabbitMqSettings
     {
-        public string RabbitHost { get; set; }
-        public string RabbitUserName { get; set; }
-        public string RabbitPassword { get; set; }
-        public int RabbitPort { get; set; }
+        public string Host { get; set; }
+        public string Username { get; set; }
+        public string Password { get; set; }
+        public int Port { get; set; }
         public string PendingExecutionRoutingKey { get; set; }
         public string DoneExecutionRoutingKey { get; set; }
         public string ParticipationExchange { get; set; }

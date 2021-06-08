@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using Domain.Exceptions;
 using Domain.TestExecution.Helpers;
 
@@ -9,13 +8,8 @@ namespace Domain.TestExecution.OOP.CSharp
 {
     public class CsharpCodeGenerator : CodeGenerator<OoFunction>
     {
-        public override string GetTestNameByOrder(int order) => $"{TestPrefix}{order}";
-        public override string TestPrefix => "Test";
-        private ICodeAnalyzer _analyzer;
-        private string _headerCode;
-        protected override string CustomHeader => new StringBuilder("using NUnit.Framework;")
-            .Append(_headerCode)
-            .ToString();
+        private readonly ICodeAnalyzer _analyzer;
+        private readonly string _headerCode;
 
         public CsharpCodeGenerator(IList<TestEntity> tests, IList<FunctionEntity> functions, ICodeAnalyzer analyzer,
             string? headerCode)
@@ -26,6 +20,17 @@ namespace Domain.TestExecution.OOP.CSharp
             TestsList = tests.Select(ToOoTest).ToList();
         }
 
+        public override string TestPrefix => "Test";
+
+        protected override string CustomHeader => new StringBuilder("using NUnit.Framework;")
+            .Append(_headerCode)
+            .ToString();
+
+        public override string GetTestNameByOrder(int order)
+        {
+            return $"{TestPrefix}{order}";
+        }
+
         private string ToStaticClass(string code, string className)
         {
             return $@"
@@ -34,7 +39,10 @@ namespace Domain.TestExecution.OOP.CSharp
              }}";
         }
 
-        private string GetClassName(string name, int order) => $"{name}{order}";
+        private string GetClassName(string name, int order)
+        {
+            return $"{name}{order}";
+        }
 
         private OoFunction ToOoFunction(FunctionEntity func)
         {
@@ -76,6 +84,5 @@ namespace Domain.TestExecution.OOP.CSharp
                 Assert.True({testContent});
             }}";
         }
-
     }
 }

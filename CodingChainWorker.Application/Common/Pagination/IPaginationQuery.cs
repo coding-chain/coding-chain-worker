@@ -5,5 +5,4 @@ namespace Application.Common.Pagination
         public int Page { get; }
         public int Size { get; }
     }
-
 }

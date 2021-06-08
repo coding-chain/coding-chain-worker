@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Application.Contracts;
+using Application.Contracts.Factories;
 using Application.Contracts.IService;
 using Domain.TestExecution;
 using MediatR;
@@ -13,6 +13,7 @@ namespace Application.ParticipationExecution
     public record PrepareParticipationSessionCommand(Guid Id, LanguageEnum Language) : INotification;
 
     public record PreparedParticipationResponse(Guid ParticipationId);
+
     public class PrepareParticipationSessionHandler : INotificationHandler<PrepareParticipationSessionCommand>
     {
         private readonly IServiceProvider _serviceProvider;
@@ -44,6 +45,4 @@ namespace Application.ParticipationExecution
             }
         }
     }
-    
-    
 }

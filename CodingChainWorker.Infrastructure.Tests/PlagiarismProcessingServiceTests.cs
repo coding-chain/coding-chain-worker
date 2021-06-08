@@ -16,21 +16,21 @@ namespace CodingChainWorker.Infrastructure.Tests
 
     public class PlagiarismProcessingServiceTests
     {
-        private PlagiarismService _plagiarismService;
         private List<FunctionAggregate> _functionsToCompare;
-        private FunctionAggregate _suspectedFunction;
+        private PlagiarismService _plagiarismService;
         private PlagiarismSettings _settings;
+        private FunctionAggregate _suspectedFunction;
 
         [SetUp]
         public void Setup()
         {
-            _settings = new PlagiarismSettings()
+            _settings = new PlagiarismSettings
             {
                 Threshold = 0.6,
-                Configurations = new List<ComparisonConfig>()
+                Configurations = new List<ComparisonConfig>
                 {
                     new() {SamplingWindow = 6, KGramLength = 3},
-                    new() {SamplingWindow = 8, KGramLength = 5},
+                    new() {SamplingWindow = 8, KGramLength = 5}
                 }
             };
             _plagiarismService = new PlagiarismService();
