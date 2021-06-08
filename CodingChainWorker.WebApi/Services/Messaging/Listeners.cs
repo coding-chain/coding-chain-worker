@@ -1,5 +1,4 @@
-﻿using System;
-using Application.ParticipationExecution;
+﻿using Application.ParticipationExecution;
 using Application.PlagiarismAnalyze;
 using CodingChainApi.Infrastructure.Settings;
 using MediatR;
@@ -10,8 +9,8 @@ namespace CodingChainApi.Services.Messaging
     public class ParticipationPendingExecutionListenerService : NotifierListenerService<RunParticipationTestsCommand>
     {
         public ParticipationPendingExecutionListenerService(IRabbitMqSettings settings,
-            ILogger<ParticipationPendingExecutionListenerService> logger, IServiceProvider serviceProvider) : base(settings,
-            logger, serviceProvider)
+            ILogger<ParticipationPendingExecutionListenerService> logger, IPublisher mediator) : base(settings,
+            logger, mediator)
         {
             Exchange = settings.ParticipationExchange;
             RoutingKey = settings.PendingExecutionRoutingKey;
@@ -21,8 +20,8 @@ namespace CodingChainApi.Services.Messaging
     public class PlagiarismExecutionListenerService : NotifierListenerService<PlagiarismAnalyzeNotification>
     {
         public PlagiarismExecutionListenerService(IRabbitMqSettings settings,
-            ILogger<PlagiarismExecutionListenerService> logger, IServiceProvider serviceProvider) : base(settings,
-            logger, serviceProvider)
+            ILogger<PlagiarismExecutionListenerService> logger, IPublisher mediator) : base(settings,
+            logger, mediator)
         {
             Exchange = settings.PlagiarismExchange;
             RoutingKey = settings.PlagiarismAnalyzeExecutionRoutingKey;
@@ -33,8 +32,8 @@ namespace CodingChainApi.Services.Messaging
         PrepareParticipationExecutionListenerService : NotifierListenerService<PrepareParticipationSessionCommand>
     {
         public PrepareParticipationExecutionListenerService(IRabbitMqSettings settings,
-            ILogger<PrepareParticipationExecutionListenerService> logger, IServiceProvider serviceProvider) : base(settings,
-            logger, serviceProvider)
+            ILogger<PrepareParticipationExecutionListenerService> logger, IPublisher mediator) : base(settings,
+            logger, mediator)
         {
             Exchange = settings.ParticipationExchange;
             RoutingKey = settings.PrepareExecutionRoutingKey;
@@ -44,8 +43,8 @@ namespace CodingChainApi.Services.Messaging
     public class CleanParticipationExecutionListenerService : NotifierListenerService<CleanParticipationSessionCommand>
     {
         public CleanParticipationExecutionListenerService(IRabbitMqSettings settings,
-            ILogger<CleanParticipationExecutionListenerService> logger, IServiceProvider serviceProvider) : base(settings,
-            logger, serviceProvider)
+            ILogger<CleanParticipationExecutionListenerService> logger, IPublisher mediator) : base(settings,
+            logger, mediator)
         {
             Exchange = settings.ParticipationExchange;
             RoutingKey = settings.CleanExecutionRoutingKey;

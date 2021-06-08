@@ -25,18 +25,21 @@ namespace Application.PlagiarismAnalyze
     public class PlagiarismAnalyzeHandler : INotificationHandler<PlagiarismAnalyzeNotification>
     {
         private readonly IPlagiarismSettings _plagiarismSettings;
-        private readonly ICodePlagiarismService _codePlagiarismService;
-        private readonly IDispatcher<PlagiarismAnalyzeResponse> _dispatcher;
+        private readonly IServiceProvider _serviceProvider;
 
-        public PlagiarismAnalyzeHandler( IPlagiarismSettings plagiarismSettings, ICodePlagiarismService codePlagiarismService, IDispatcher<PlagiarismAnalyzeResponse> dispatcher)
+        public PlagiarismAnalyzeHandler(IServiceProvider serviceProvider, IPlagiarismSettings plagiarismSettings)
         {
             _plagiarismSettings = plagiarismSettings;
-            _codePlagiarismService = codePlagiarismService;
-            _dispatcher = dispatcher;
+            _serviceProvider = serviceProvider;
         }
 
         public Task Handle(PlagiarismAnalyzeNotification notification, CancellationToken cancellationToken)
         {
+            using var scope = _serviceProvider.CreateScope();
+            var codePlagiarismService = scope.ServiceProvider
+                .GetRequiredService<ICodePlagiarismService>();
+            var donePlagiarismService = scope.ServiceProvider
+                .GetRequiredService<IDispatcher<PlagiarismAnalyzeResponse>>();
 
 
             var suspectedFunction = new FunctionAggregate(new FunctionId(notification.SuspectedFunction.Id),
@@ -45,12 +48,12 @@ namespace Application.PlagiarismAnalyze
                 .Select(f => new FunctionAggregate(new FunctionId(f.Id), f.Code))
                 .ToList();
             var functionWithSimilarities =
-                _codePlagiarismService.AnalyseCode(suspectedFunction, comparedFunctions, _plagiarismSettings);
+                codePlagiarismService.AnalyseCode(suspectedFunction, comparedFunctions, _plagiarismSettings);
             var similarFunctions = functionWithSimilarities.SimilarFunctions
                 .Select(f => new FunctionSimilarity(f.Id.Value, f.SimilarityRate))
                 .ToList();
             var res = new PlagiarismAnalyzeResponse(functionWithSimilarities.Id.Value, similarFunctions);
-            _dispatcher.Dispatch(res);
+            donePlagiarismService.Dispatch(res);
             return Task.CompletedTask;
         }
     }

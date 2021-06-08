@@ -16,30 +16,31 @@ namespace Application.ParticipationExecution
 
     public class PrepareParticipationSessionHandler : INotificationHandler<PrepareParticipationSessionCommand>
     {
-        private IProcessServiceFactory _processServiceFactory;
-        private ILogger<PrepareParticipationSessionHandler> _logger;
-        private IDispatcher<PreparedParticipationResponse> _dispatcher;
+        private readonly IServiceProvider _serviceProvider;
 
-        public PrepareParticipationSessionHandler(IProcessServiceFactory processServiceFactory, ILogger<PrepareParticipationSessionHandler> logger, IDispatcher<PreparedParticipationResponse> dispatcher)
+
+        public PrepareParticipationSessionHandler(IServiceProvider serviceProvider)
         {
-            _processServiceFactory = processServiceFactory;
-            _logger = logger;
-            _dispatcher = dispatcher;
+            _serviceProvider = serviceProvider;
         }
 
         public async Task Handle(PrepareParticipationSessionCommand request, CancellationToken cancellationToken)
         {
-            var processService = _processServiceFactory.GetProcessServiceByLanguage(request.Language);
+            using var scope = _serviceProvider.CreateScope();
+            var processService = scope.ServiceProvider
+                .GetRequiredService<IProcessServiceFactory>().GetProcessServiceByLanguage(request.Language);
+            var logger = scope.ServiceProvider.GetRequiredService<ILogger<PrepareParticipationSessionHandler>>();
+            var dispatcher = scope.ServiceProvider.GetRequiredService<IDispatcher<PreparedParticipationResponse>>();
             try
             {
                 var participation =
                     ParticipationAggregateFactory.GetParticipationAggregateByLanguage(request.Id, request.Language);
                 await processService.PrepareParticipationExecution(participation);
-                _dispatcher.Dispatch(new PreparedParticipationResponse(request.Id));
+                dispatcher.Dispatch(new PreparedParticipationResponse(request.Id));
             }
             catch (Exception e)
             {
-                _logger.LogError("Cannot prepare participation execution : {ParticipationId}, error: {Error} ",
+                logger.LogError("Cannot prepare participation execution : {ParticipationId}, error: {Error} ",
                     request.Id, e.Message);
             }
         }

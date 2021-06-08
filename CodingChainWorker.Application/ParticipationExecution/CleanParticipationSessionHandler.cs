@@ -13,18 +13,20 @@ namespace Application.ParticipationExecution
 
     public class CleanParticipationSessionHandler : INotificationHandler<CleanParticipationSessionCommand>
     {
-        private readonly IProcessServiceFactory _processServiceFactory;
-        private readonly ILogger<CleanParticipationSessionHandler> _logger;
+        private readonly IServiceProvider _serviceProvider;
 
-        public CleanParticipationSessionHandler(IProcessServiceFactory processServiceFactory, ILogger<CleanParticipationSessionHandler> logger)
+
+        public CleanParticipationSessionHandler(IServiceProvider serviceProvider)
         {
-            _processServiceFactory = processServiceFactory;
-            _logger = logger;
+            _serviceProvider = serviceProvider;
         }
 
         public async Task Handle(CleanParticipationSessionCommand request, CancellationToken cancellationToken)
         {
-            var processService = _processServiceFactory.GetProcessServiceByLanguage(request.Language);
+            using var scope = _serviceProvider.CreateScope();
+            var processService = scope.ServiceProvider
+                .GetRequiredService<IProcessServiceFactory>().GetProcessServiceByLanguage(request.Language);
+            var logger = scope.ServiceProvider.GetRequiredService<ILogger<CleanParticipationSessionHandler>>();
             try
             {
                 var participation =
@@ -33,7 +35,7 @@ namespace Application.ParticipationExecution
             }
             catch (Exception e)
             {
-                _logger.LogError("Cannot clean participation execution : {ParticipationId}, error: {Error} ",
+                logger.LogError("Cannot clean participation execution : {ParticipationId}, error: {Error} ",
                     request.Id, e.Message);
             }
         }

@@ -9,7 +9,6 @@ using Application.Contracts.Processes;
 using Domain.TestExecution;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 
 namespace Application.ParticipationExecution
 {
@@ -24,20 +23,20 @@ namespace Application.ParticipationExecution
 
     public class RunParticipationTestsHandler : INotificationHandler<RunParticipationTestsCommand>
     {
-        private readonly IProcessServiceFactory _processServiceFactory;
-        private readonly IDispatcher<CodeProcessResponse> _dispatcher;
-        private readonly ILogger<RunParticipationTestsHandler> _logger;
+        private readonly IServiceProvider _serviceProvider;
 
-        public RunParticipationTestsHandler(IProcessServiceFactory processServiceFactory, IDispatcher<CodeProcessResponse> dispatcher, ILogger<RunParticipationTestsHandler> logger)
+
+        public RunParticipationTestsHandler(IServiceProvider serviceProvider)
         {
-            _processServiceFactory = processServiceFactory;
-            _dispatcher = dispatcher;
-            _logger = logger;
+            _serviceProvider = serviceProvider;
         }
 
         public async Task Handle(RunParticipationTestsCommand request, CancellationToken cancellationToken)
         {
-            var processService = _processServiceFactory.GetProcessServiceByLanguage(request.Language);
+            using var scope = _serviceProvider.CreateScope();
+            var processService = scope.ServiceProvider
+                .GetRequiredService<IProcessServiceFactory>().GetProcessServiceByLanguage(request.Language);
+            var executionResponseService = scope.ServiceProvider.GetRequiredService<IDispatcher<CodeProcessResponse>>();
             try
             {
                 var execution =
@@ -46,7 +45,7 @@ namespace Application.ParticipationExecution
 
                 await processService.WriteAndExecuteParticipation(execution);
                 execution.ParseResult();
-                _dispatcher.Dispatch(new CodeProcessResponse(
+                executionResponseService.Dispatch(new CodeProcessResponse(
                     execution.Id.Value,
                     execution.Error,
                     execution.Output,
@@ -58,7 +57,7 @@ namespace Application.ParticipationExecution
             }
             catch (Exception e)
             {
-                _dispatcher.Dispatch(new CodeProcessResponse(
+                executionResponseService.Dispatch(new CodeProcessResponse(
                     request.Id,
                     "Parsing / Execution error", null, new List<Guid>()));
             }
