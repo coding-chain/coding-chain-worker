@@ -36,7 +36,7 @@ namespace Application.ParticipationExecution
                 var participation =
                     ParticipationAggregateFactory.GetParticipationAggregateByLanguage(request.Id, request.Language);
                 await processService.PrepareParticipationExecution(participation);
-                dispatcher.Dispatch(new PreparedParticipationResponse(request.Id));
+                await dispatcher.Dispatch(new PreparedParticipationResponse(request.Id));
             }
             catch (Exception e)
             {

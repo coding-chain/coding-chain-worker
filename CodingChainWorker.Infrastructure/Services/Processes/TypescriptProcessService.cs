@@ -22,9 +22,9 @@ namespace CodingChainApi.Infrastructure.Services.Processes
                 $"{_typescriptExecutionSettings.BaseTestFileName}.spec.ts"));
 
         protected override string ProcessArguments =>
-            $"/c npm --prefix {TemplateDirectoryPath} run {TestCommand} & exit";
+            $" npm --prefix {TemplateDirectoryPath} run {TestCommand}";
 
-        protected override string ProcessName => "cmd.exe";
+        protected override string ProcessName => "bash";
         protected sealed override ILogger<ProcessService> Logger { get; set; }
     }
 }

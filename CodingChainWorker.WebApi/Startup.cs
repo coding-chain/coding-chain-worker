@@ -14,6 +14,8 @@ using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Nest;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using ZymLabs.NSwag.FluentValidation;
@@ -119,8 +121,10 @@ namespace CodingChainApi
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IElasticClient client,
+            ILogger<Startup> logger)
         {
+            logger.LogInformation("Elastic search ping result : {PingInfo}", client.Ping().DebugInformation);
             app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 
             app.UseResponseCompression();

@@ -9,6 +9,7 @@ using Application.Contracts.Processes;
 using Domain.TestExecution;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace Application.ParticipationExecution
 {
@@ -36,6 +37,7 @@ namespace Application.ParticipationExecution
             using var scope = _serviceProvider.CreateScope();
             var processService = scope.ServiceProvider
                 .GetRequiredService<IProcessServiceFactory>().GetProcessServiceByLanguage(request.Language);
+            var logger = scope.ServiceProvider.GetRequiredService<ILogger<RunParticipationTestsHandler>>();
             var executionResponseService = scope.ServiceProvider.GetRequiredService<IDispatcher<CodeProcessResponse>>();
             try
             {
@@ -45,7 +47,7 @@ namespace Application.ParticipationExecution
 
                 await processService.WriteAndExecuteParticipation(execution);
                 execution.ParseResult();
-                executionResponseService.Dispatch(new CodeProcessResponse(
+                await executionResponseService.Dispatch(new CodeProcessResponse(
                     execution.Id.Value,
                     execution.Error,
                     execution.Output,
@@ -57,9 +59,11 @@ namespace Application.ParticipationExecution
             }
             catch (Exception e)
             {
-                executionResponseService.Dispatch(new CodeProcessResponse(
+                await executionResponseService.Dispatch(new CodeProcessResponse(
                     request.Id,
                     "Parsing / Execution error", null, new List<Guid>()));
+                logger.LogError("Cannot run participation {ParticipationId},   {Error}",request.Id, e.Message);
+
             }
         }
     }

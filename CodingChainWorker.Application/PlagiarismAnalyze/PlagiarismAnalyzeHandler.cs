@@ -53,8 +53,7 @@ namespace Application.PlagiarismAnalyze
                 .Select(f => new FunctionSimilarity(f.Id.Value, f.SimilarityRate))
                 .ToList();
             var res = new PlagiarismAnalyzeResponse(functionWithSimilarities.Id.Value, similarFunctions);
-            donePlagiarismService.Dispatch(res);
-            return Task.CompletedTask;
+            return donePlagiarismService.Dispatch(res);
         }
     }
 }
