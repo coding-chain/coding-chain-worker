@@ -29,8 +29,9 @@ namespace Application.ParticipationExecution
             {
                 var processService = scope.ServiceProvider
                     .GetRequiredService<IProcessServiceFactory>().GetProcessServiceByLanguage(request.Language);
-                var participation =
-                    ParticipationAggregateFactory.GetParticipationAggregateByLanguage(request.Id, request.Language);
+                var participationFactory = scope.ServiceProvider
+                    .GetRequiredService<IParticipationAggregateFactory>();
+                var participation = participationFactory.GetParticipationAggregateByLanguage(request.Id, request.Language);
                 await processService.CleanParticipationExecution(participation);
             }
             catch (Exception e)

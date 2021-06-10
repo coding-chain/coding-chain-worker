@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Application.Contracts.Factories;
@@ -41,12 +42,16 @@ namespace Application.ParticipationExecution
             {
                 var processService = scope.ServiceProvider
                     .GetRequiredService<IProcessServiceFactory>().GetProcessServiceByLanguage(request.Language);
+                var participationFactory = scope.ServiceProvider
+                    .GetRequiredService<IParticipationAggregateFactory>();
                 var execution =
-                    ParticipationAggregateFactory.GetParticipationAggregateByLanguage(request.Id, request.Language,
+                    participationFactory.GetParticipationAggregateByLanguage(request.Id, request.Language,
                         request.Tests, request.Functions, request.HeaderCode);
 
                 await processService.WriteAndExecuteParticipation(execution);
-                execution.ParseResult();
+                execution.ParseResult();    
+                logger.LogInformation("Execution error : {Error}", execution.Error);
+                logger.LogInformation("Execution output : {Output}", execution.Output);
                 await executionResponseService.Dispatch(new CodeProcessResponse(
                     execution.Id.Value,
                     execution.Error,

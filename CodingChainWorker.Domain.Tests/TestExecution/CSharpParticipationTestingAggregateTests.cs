@@ -30,25 +30,25 @@ namespace CodingChainWorker.Domain.Tests.TestExecution
         [SetUp]
         public void Setup()
         {
-            _participationAggregate = new CSharpParticipationAggregate(
-                new ParticipationId(Guid.NewGuid()),
-                LanguageEnum.CSharp,
-                GetTestHeaderCode(),
-                new List<FunctionEntity>
-                {
-                    new(FunctionsTestHelper.GetTestFunctionCode("test", 2, "string"), 2, GetFunctionId()),
-                    new(FunctionsTestHelper.GetTestFunctionCode("test", 1, "string"), 1, GetFunctionId())
-                },
-                new List<TestEntity>
-                {
-                    new(GetTestId(),
-                        FunctionsTestHelper.GetTestFunctionCode("test", 1, "string", "bool", @"return ""test""==test;"),
-                        FunctionsTestHelper.GetTestFunctionCode("test", 1, null, "string", @"return ""test"";")),
-                    new(GetTestId(),
-                        FunctionsTestHelper.GetTestFunctionCode("test", 1, "string", "bool", @"return ""test""==test;"),
-                        FunctionsTestHelper.GetTestFunctionCode("test", 1, null, "string", @"return ""test"";"))
-                }
-            );
+            // _participationAggregate = new CSharpParticipationAggregate(
+            //     new ParticipationId(Guid.NewGuid()),
+            //     LanguageEnum.CSharp,
+            //     GetTestHeaderCode(),
+            //     new List<FunctionEntity>
+            //     {
+            //         new(FunctionsTestHelper.GetTestFunctionCode("test", 2, "string"), 2, GetFunctionId()),
+            //         new(FunctionsTestHelper.GetTestFunctionCode("test", 1, "string"), 1, GetFunctionId())
+            //     },
+            //     new List<TestEntity>
+            //     {
+            //         new(GetTestId(),
+            //             FunctionsTestHelper.GetTestFunctionCode("test", 1, "string", "bool", @"return ""test""==test;"),
+            //             FunctionsTestHelper.GetTestFunctionCode("test", 1, null, "string", @"return ""test"";")),
+            //         new(GetTestId(),
+            //             FunctionsTestHelper.GetTestFunctionCode("test", 1, "string", "bool", @"return ""test""==test;"),
+            //             FunctionsTestHelper.GetTestFunctionCode("test", 1, null, "string", @"return ""test"";"))
+            //     }
+            // );
         }
 
 

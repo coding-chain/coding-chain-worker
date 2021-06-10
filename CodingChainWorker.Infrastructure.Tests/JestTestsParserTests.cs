@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using CodingChainApi.Infrastructure.Services.TestsParsers;
 using Domain.TestExecution.Imperative.Typescript;
 using NUnit.Framework;
 
@@ -19,14 +20,14 @@ namespace CodingChainWorker.Domain.Tests.TestExecution
         [Test]
         public void should_return_false_on_test_failed()
         {
-            var parser = new JestTestsParser();
+            var parser = new WindowsJestTestsParser();
             var hasPassed = parser.FunctionPassed(passingTestName, null, TestOutput);
             Assert.True(hasPassed);
         }
         [Test]
         public void should_return_true_on_test_failed()
         {
-            var parser = new JestTestsParser();
+            var parser = new WindowsJestTestsParser();
             var hasPassed = parser.FunctionPassed(failingTestName, null, TestOutput);
             Assert.False(hasPassed);
         }

@@ -33,8 +33,9 @@ namespace Application.ParticipationExecution
                 var processService = scope.ServiceProvider
                     .GetRequiredService<IProcessServiceFactory>().GetProcessServiceByLanguage(request.Language);
                 var dispatcher = scope.ServiceProvider.GetRequiredService<IDispatcher<PreparedParticipationResponse>>();
+                var participationFactory = scope.ServiceProvider.GetRequiredService<IParticipationAggregateFactory>();
                 var participation =
-                    ParticipationAggregateFactory.GetParticipationAggregateByLanguage(request.Id, request.Language);
+                    participationFactory.GetParticipationAggregateByLanguage(request.Id, request.Language);
                 await processService.PrepareParticipationExecution(participation);
                 await dispatcher.Dispatch(new PreparedParticipationResponse(request.Id));
             }

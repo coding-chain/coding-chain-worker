@@ -12,17 +12,18 @@ namespace Domain.TestExecution
 
 
         protected ParticipationTestingAggregate(ParticipationId id, LanguageEnum language, string? headerCode,
-            IList<FunctionEntity> functions, IList<TestEntity> tests) : base(id, language, headerCode)
+            IList<FunctionEntity> functions, IList<TestEntity> tests, IUnitTestsParser unitTestsParser) : base(id, language, headerCode)
         {
             _functions = functions.ToList();
             _tests = tests.ToList();
+            UnitTestsParser = unitTestsParser;
         }
 
         public override IReadOnlyCollection<FunctionEntity> Functions => _functions.AsReadOnly();
         public override IReadOnlyCollection<TestEntity> Tests => _tests.AsReadOnly();
         protected abstract ICodeAnalyzer CodeAnalyzer { get; }
         protected abstract ICodeGenerator<TFunction> CodeGenerator { get; }
-        protected abstract IUnitTestsParser UnitTestsParser { get; }
+        private IUnitTestsParser UnitTestsParser { get; }
 
         public override string GetExecutableCode()
         {

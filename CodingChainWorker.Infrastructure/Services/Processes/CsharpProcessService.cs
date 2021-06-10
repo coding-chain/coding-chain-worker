@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 
 namespace CodingChainApi.Infrastructure.Services.Processes
 {
-    public class CsharpProcessService : ProcessService
+    public class CsharpProcessService : ProcessService, ICsharpProcessService
     {
         private const string TestCommand = "test -v n";
         private readonly ICSharpExecutionSettings _cSharpExecutionSettings;

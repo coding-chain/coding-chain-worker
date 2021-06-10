@@ -20,8 +20,8 @@ namespace CodingChainApi.Infrastructure.Factories
         {
             return language switch
             {
-                LanguageEnum.Typescript => _serviceProvider.GetRequiredService<TypescriptProcessService>(),
-                _ => _serviceProvider.GetRequiredService<CsharpProcessService>()
+                LanguageEnum.Typescript => _serviceProvider.GetRequiredService<ITypescriptProcessService>(),
+                _ => _serviceProvider.GetRequiredService<ICsharpProcessService>()
             };
         }
     }

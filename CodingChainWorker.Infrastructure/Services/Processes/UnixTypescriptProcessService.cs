@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System.Diagnostics;
+using System.IO;
+using System.Text;
 using System.Threading.Tasks;
 using CodingChainApi.Infrastructure.Services.RightElevator;
 using CodingChainApi.Infrastructure.Settings;
@@ -7,14 +9,14 @@ using Microsoft.Extensions.Logging;
 
 namespace CodingChainApi.Infrastructure.Services.Processes
 {
-    public class TypescriptProcessService : ProcessService
+    public class UnixTypescriptProcessService : ProcessService, ITypescriptProcessService
     {
         private const string TestCommand = "test";
         private readonly ITypescriptExecutionSettings _typescriptExecutionSettings;
         private readonly IRightElevatorService _rightElevatorService;
 
-        public TypescriptProcessService(IDirectoryService directoryService,
-            ILogger<TypescriptProcessService> logger, ITypescriptExecutionSettings typescriptExecutionSettings,
+        public UnixTypescriptProcessService(IDirectoryService directoryService,
+            ILogger<UnixTypescriptProcessService> logger, ITypescriptExecutionSettings typescriptExecutionSettings,
             IRightElevatorService rightElevatorService) : base(
             directoryService)
         {
@@ -36,6 +38,6 @@ namespace CodingChainApi.Infrastructure.Services.Processes
         {
             return _rightElevatorService.Elevate(TemplateDirectoryPath.FullName);
         }
-
+      
     }
 }

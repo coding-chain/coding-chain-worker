@@ -11,8 +11,11 @@ using CodingChainApi.Infrastructure.Messaging;
 using CodingChainApi.Infrastructure.Services;
 using CodingChainApi.Infrastructure.Services.Processes;
 using CodingChainApi.Infrastructure.Services.RightElevator;
+using CodingChainApi.Infrastructure.Services.TestsParsers;
 using CodingChainApi.Infrastructure.Settings;
 using Domain.Plagiarism;
+using Domain.TestExecution.Imperative.Typescript;
+using Domain.TestExecution.OOP.CSharp;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -28,11 +31,11 @@ namespace CodingChainApi.Infrastructure
         {
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
             services.AddScoped<IProcessServiceFactory, ProcessServiceFactory>();
-            services.AddScoped<TypescriptProcessService>();
-            services.AddScoped<CsharpProcessService>();
-            services.AddScoped<IRightElevatorService, UnixElevatorService>();
-
+            services.AddScoped<IParticipationAggregateFactory, ParticipationAggregateFactory>();
             services.AddScoped<IDirectoryService, DirectoryService>();
+            services.ConfigureRightElevator(configuration);
+            services.ConfigureTestsParsers(configuration);
+            services.ConfigureProcessServices(configuration);
             ConfigureInjectableSettings<IAssetsSettings, AssetsSettings>(services, configuration);
             ConfigureInjectableSettings<IPlagiarismSettings, PlagiarismSettings>(services, configuration);
             ConfigureInjectableSettings<ICSharpExecutionSettings, CSharpExecutionSettings>(services, configuration);
@@ -44,19 +47,54 @@ namespace CodingChainApi.Infrastructure
             return services;
         }
 
-        private static void ConfigureRightElevator(IServiceCollection services, IConfiguration configuration)
+        private static void ConfigureProcessServices(this IServiceCollection services, IConfiguration configuration)
         {
+            services.AddScoped<WindowsTypescriptProcessService>();
+            services.AddScoped<UnixTypescriptProcessService>();
+            services.AddScoped<ITypescriptProcessService>(provider =>
+            {
+                if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+                {
+                    return provider.GetRequiredService<WindowsTypescriptProcessService>();
+                }
+                return provider.GetRequiredService<UnixTypescriptProcessService>();
+            });
+            services.AddScoped<ICsharpProcessService, CsharpProcessService>();
+        }
+
+        private static void ConfigureTestsParsers(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddScoped<WindowsJestTestsParser>();
+            services.AddScoped<UnixJestTestsParser>();
+            services.AddScoped<ICsharpTestsParser, NUnitTestsParser>();
+            services.AddScoped<ITypescriptTestsParser>(provider =>
+            {
+                if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+                {
+                    return provider.GetRequiredService<WindowsJestTestsParser>();
+                }
+                return provider.GetRequiredService<UnixJestTestsParser>();
+            });
+        }
+        
+        private static void ConfigureRightElevator(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddScoped<WindowsRightElevatorService>();
+            services.AddScoped<MacRightElevatorService>();
+            services.AddScoped<UnixRightElevatorService>();
             services.AddScoped<IRightElevatorService>(provider =>
             {
                 if (Environment.OSVersion.Platform == PlatformID.Win32NT)
                 {
                     return provider.GetRequiredService<WindowsRightElevatorService>();
                 }
+
                 if (Environment.OSVersion.Platform == PlatformID.MacOSX)
                 {
                     return provider.GetRequiredService<MacRightElevatorService>();
                 }
-                return provider.GetRequiredService<UnixElevatorService>();
+
+                return provider.GetRequiredService<UnixRightElevatorService>();
             });
         }
 

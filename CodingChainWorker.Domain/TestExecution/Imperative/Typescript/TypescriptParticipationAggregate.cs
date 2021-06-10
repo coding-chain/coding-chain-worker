@@ -6,7 +6,7 @@ namespace Domain.TestExecution.Imperative.Typescript
     public class TypescriptParticipationAggregate : ParticipationTestingAggregate<ImperativeFunction>
     {
         public TypescriptParticipationAggregate(ParticipationId id, LanguageEnum language, string? headerCode,
-            IList<FunctionEntity> functions, IList<TestEntity> tests) : base(id, language, headerCode, functions, tests)
+            IList<FunctionEntity> functions, IList<TestEntity> tests, IUnitTestsParser unitTestsParser) : base(id, language, headerCode, functions, tests, unitTestsParser)
         {
             CodeGenerator = new TypescriptCodeGenerator(tests, functions, CodeAnalyzer, HeaderCode);
         }
@@ -14,6 +14,6 @@ namespace Domain.TestExecution.Imperative.Typescript
 
         protected sealed override ICodeAnalyzer CodeAnalyzer { get; } = new TypescriptCodeAnalyzer();
         protected override ICodeGenerator<ImperativeFunction> CodeGenerator { get; }
-        protected override IUnitTestsParser UnitTestsParser { get; } = new JestTestsParser();
+  
     }
 }

@@ -4,9 +4,9 @@ using Microsoft.Extensions.Logging;
 
 namespace CodingChainApi.Infrastructure.Services.RightElevator
 {
-    public class UnixElevatorService : RightElevatorBaseService
+    public class UnixRightElevatorService : RightElevatorBaseService
     {
-        public UnixElevatorService(ILogger<UnixElevatorService> logger) : base(logger)
+        public UnixRightElevatorService(ILogger<UnixRightElevatorService> logger) : base(logger)
         {
         }
         protected override Task ElevateRights(string path)

@@ -1,15 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Application.Contracts.Factories;
+using Application.Contracts.IService;
+using Application.ParticipationExecution;
 using Domain.TestExecution;
 using Domain.TestExecution.Imperative.Typescript;
 using Domain.TestExecution.OOP.CSharp;
 
-namespace Application.ParticipationExecution
+namespace CodingChainApi.Infrastructure.Factories
 {
-    public static class ParticipationAggregateFactory
+    public class ParticipationAggregateFactory : IParticipationAggregateFactory
     {
-        public static ParticipationAggregate GetParticipationAggregateByLanguage(Guid id,
+        private readonly ITypescriptTestsParser _typescriptTestsParser;
+        private readonly ICsharpTestsParser _csharpTestsParser;
+
+        public ParticipationAggregateFactory(ITypescriptTestsParser typescriptTestsParser,
+            ICsharpTestsParser csharpTestsParser)
+        {
+            _typescriptTestsParser = typescriptTestsParser;
+            _csharpTestsParser = csharpTestsParser;
+        }
+
+        public ParticipationAggregate GetParticipationAggregateByLanguage(Guid id,
             LanguageEnum languageEnum, IList<RunParticipationTestsCommand.Test>? tests = null,
             IList<RunParticipationTestsCommand.Function>? functions = null, string? headerCode = null)
         {
@@ -22,20 +35,20 @@ namespace Application.ParticipationExecution
             };
         }
 
-        private static IList<FunctionEntity> CommandFunctionsToEntity(
+        private IList<FunctionEntity> CommandFunctionsToEntity(
             IList<RunParticipationTestsCommand.Function> functions)
         {
             return functions.Select(f => new FunctionEntity(f.Code, f.Order, new FunctionId(f.Id))).ToList();
         }
 
-        private static IList<TestEntity> CommandTestsToEntity(
+        private IList<TestEntity> CommandTestsToEntity(
             IList<RunParticipationTestsCommand.Test> tests)
         {
             return tests
                 .Select(t => new TestEntity(new TestId(t.Id), t.OutputValidator, t.InputGenerator)).ToList();
         }
 
-        private static CSharpParticipationAggregate GetCSharpAggregate(
+        private CSharpParticipationAggregate GetCSharpAggregate(
             Guid id, IList<RunParticipationTestsCommand.Test> tests,
             IList<RunParticipationTestsCommand.Function> functions, string? headerCode = null)
         {
@@ -44,10 +57,10 @@ namespace Application.ParticipationExecution
                 LanguageEnum.CSharp,
                 headerCode,
                 CommandFunctionsToEntity(functions),
-                CommandTestsToEntity(tests));
+                CommandTestsToEntity(tests), _csharpTestsParser);
         }
 
-        private static TypescriptParticipationAggregate GetTypescriptAggregate(
+        private TypescriptParticipationAggregate GetTypescriptAggregate(
             Guid id, IList<RunParticipationTestsCommand.Test> tests,
             IList<RunParticipationTestsCommand.Function> functions, string? headerCode = null)
         {
@@ -56,7 +69,7 @@ namespace Application.ParticipationExecution
                 LanguageEnum.Typescript,
                 headerCode,
                 CommandFunctionsToEntity(functions),
-                CommandTestsToEntity(tests));
+                CommandTestsToEntity(tests), _typescriptTestsParser);
         }
     }
 }

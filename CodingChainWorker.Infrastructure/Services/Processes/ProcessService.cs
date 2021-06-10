@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Text;
 using System.Threading.Tasks;
 using Application.Contracts.IService;
 using CodingChainApi.Infrastructure.Common.Extensions;
@@ -89,15 +90,11 @@ namespace CodingChainApi.Infrastructure.Services.Processes
         protected virtual Task PostExecuteParticipation(ParticipationAggregate participation)
         {
             return Task.CompletedTask;
-        } 
+        }
 
-        protected async Task ExecuteParticipation(ParticipationAggregate participation)
+        protected virtual Process GetProcess(ParticipationAggregate partipation)
         {
-            await PreExecuteParticipation(participation);
-            Logger.LogInformation(
-                "Tests execution started for participation : {ParticipationId} on language : {Language} ",
-                participation.Id, participation.Language);
-            using var process = new Process
+            return new()
             {
                 StartInfo =
                 {
@@ -105,12 +102,22 @@ namespace CodingChainApi.Infrastructure.Services.Processes
                     RedirectStandardInput = true,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
+                    StandardErrorEncoding = Encoding.UTF8,
                     CreateNoWindow = false,
                     UseShellExecute = false,
                     Arguments = ProcessArguments
                 },
                 EnableRaisingEvents = true
             };
+        }
+
+        protected async Task ExecuteParticipation(ParticipationAggregate participation)
+        {
+            await PreExecuteParticipation(participation);
+            Logger.LogInformation(
+                "Tests execution started for participation : {ParticipationId} on language : {Language} ",
+                participation.Id, participation.Language);
+            using var process = GetProcess(participation);
             process.ErrorDataReceived += (o, e) => { participation.AddError(e.Data ?? ""); };
             process.OutputDataReceived += (o, e) => { participation.AddOutput(e.Data ?? ""); };
             process.Exited += (o, e) => { Logger.LogDebug("Process ended"); };
