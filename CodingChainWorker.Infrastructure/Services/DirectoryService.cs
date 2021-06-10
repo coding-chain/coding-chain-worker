@@ -3,6 +3,7 @@ using System.IO.Compression;
 using System.Linq;
 using CodingChainApi.Infrastructure.Common.Exceptions;
 using CodingChainApi.Infrastructure.Settings;
+using System.Security.AccessControl;
 using Domain.TestExecution;
 
 namespace CodingChainApi.Infrastructure.Services
@@ -15,22 +16,23 @@ namespace CodingChainApi.Infrastructure.Services
 
     public class DirectoryService : IDirectoryService
     {
-        private readonly IAppDataSettings _appDataSettings;
+        private readonly IAssetsSettings _assetsSettings;
         private readonly ITemplateSettings _templateSettings;
 
-        public DirectoryService(ITemplateSettings templateSettings, IAppDataSettings appDataSettings)
+        public DirectoryService(ITemplateSettings templateSettings, IAssetsSettings assetsSettings)
         {
             _templateSettings = templateSettings;
-            _appDataSettings = appDataSettings;
+            _assetsSettings = assetsSettings;
+            
             Directory.CreateDirectory(TemplateExtractParentDirectoryPath);
             Directory.CreateDirectory(TemplateZipParentDirectoryPath);
         }
 
         private string TemplateExtractParentDirectoryPath =>
-            Path.Join(_appDataSettings.BasePath, _appDataSettings.ParticipationTemplatesPath);
+            Path.Join(_assetsSettings.ParticipationTemplatesPath);
 
         private string TemplateZipParentDirectoryPath =>
-            Path.Join(_appDataSettings.BasePath, _appDataSettings.TemplatesPath);
+            Path.Join(_assetsSettings.TemplatesPath);
 
         public FileInfo? GetTemplateDirectoryByParticipation(ParticipationAggregate participation)
         {

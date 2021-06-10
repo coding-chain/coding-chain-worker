@@ -17,7 +17,7 @@ namespace CodingChainApi.Infrastructure.Services.Processes
         }
 
         protected override string ProcessArguments => $"{TestCommand} {TemplateDirectoryPath}";
-        protected override string ProcessName => "dotnet ";
+        protected override string ProcessName => "dotnet";
         protected sealed override ILogger<ProcessService> Logger { get; set; }
 
 

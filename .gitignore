@@ -88,7 +88,6 @@ fabric.properties
 /.idea/
 /templates/
 
-CodingChainWorker.WebApi/AppData/Participations
-CodingChainWorker.WebApi/AppData/Templates/csharp_template
-CodingChainWorker.WebApi/AppData/Templates/typescript_template
+CodingChainWorker.WebApi/Participations
+!CodingChainWorker.WebApi/Participations/.gitkeep
 CodingChainWorker.sln.DotSettings.user

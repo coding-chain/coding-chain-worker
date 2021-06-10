@@ -24,11 +24,11 @@ namespace Application.ParticipationExecution
         public async Task Handle(CleanParticipationSessionCommand request, CancellationToken cancellationToken)
         {
             using var scope = _serviceProvider.CreateScope();
-            var processService = scope.ServiceProvider
-                .GetRequiredService<IProcessServiceFactory>().GetProcessServiceByLanguage(request.Language);
             var logger = scope.ServiceProvider.GetRequiredService<ILogger<CleanParticipationSessionHandler>>();
             try
             {
+                var processService = scope.ServiceProvider
+                    .GetRequiredService<IProcessServiceFactory>().GetProcessServiceByLanguage(request.Language);
                 var participation =
                     ParticipationAggregateFactory.GetParticipationAggregateByLanguage(request.Id, request.Language);
                 await processService.CleanParticipationExecution(participation);

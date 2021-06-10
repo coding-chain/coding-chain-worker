@@ -35,12 +35,12 @@ namespace Application.ParticipationExecution
         public async Task Handle(RunParticipationTestsCommand request, CancellationToken cancellationToken)
         {
             using var scope = _serviceProvider.CreateScope();
-            var processService = scope.ServiceProvider
-                .GetRequiredService<IProcessServiceFactory>().GetProcessServiceByLanguage(request.Language);
             var logger = scope.ServiceProvider.GetRequiredService<ILogger<RunParticipationTestsHandler>>();
             var executionResponseService = scope.ServiceProvider.GetRequiredService<IDispatcher<CodeProcessResponse>>();
             try
             {
+                var processService = scope.ServiceProvider
+                    .GetRequiredService<IProcessServiceFactory>().GetProcessServiceByLanguage(request.Language);
                 var execution =
                     ParticipationAggregateFactory.GetParticipationAggregateByLanguage(request.Id, request.Language,
                         request.Tests, request.Functions, request.HeaderCode);

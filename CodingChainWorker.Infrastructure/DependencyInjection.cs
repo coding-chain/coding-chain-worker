@@ -10,6 +10,7 @@ using CodingChainApi.Infrastructure.Logs;
 using CodingChainApi.Infrastructure.Messaging;
 using CodingChainApi.Infrastructure.Services;
 using CodingChainApi.Infrastructure.Services.Processes;
+using CodingChainApi.Infrastructure.Services.RightElevator;
 using CodingChainApi.Infrastructure.Settings;
 using Domain.Plagiarism;
 using Microsoft.Extensions.Configuration;
@@ -29,9 +30,10 @@ namespace CodingChainApi.Infrastructure
             services.AddScoped<IProcessServiceFactory, ProcessServiceFactory>();
             services.AddScoped<TypescriptProcessService>();
             services.AddScoped<CsharpProcessService>();
+            services.AddScoped<IRightElevatorService, UnixElevatorService>();
 
             services.AddScoped<IDirectoryService, DirectoryService>();
-            ConfigureInjectableSettings<IAppDataSettings, AppDataSettings>(services, configuration);
+            ConfigureInjectableSettings<IAssetsSettings, AssetsSettings>(services, configuration);
             ConfigureInjectableSettings<IPlagiarismSettings, PlagiarismSettings>(services, configuration);
             ConfigureInjectableSettings<ICSharpExecutionSettings, CSharpExecutionSettings>(services, configuration);
             ConfigureInjectableSettings<ITypescriptExecutionSettings, TypescriptExecutionSettings>(services,
@@ -40,6 +42,22 @@ namespace CodingChainApi.Infrastructure
             ConfigureRabbitMqSettings(services, configuration);
             ConfigureElasticSearch(services, configuration);
             return services;
+        }
+
+        private static void ConfigureRightElevator(IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddScoped<IRightElevatorService>(provider =>
+            {
+                if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+                {
+                    return provider.GetRequiredService<WindowsRightElevatorService>();
+                }
+                if (Environment.OSVersion.Platform == PlatformID.MacOSX)
+                {
+                    return provider.GetRequiredService<MacRightElevatorService>();
+                }
+                return provider.GetRequiredService<UnixElevatorService>();
+            });
         }
 
         private static TImplementation ConfigureInjectableSettings<TInterface, TImplementation>(
@@ -68,7 +86,7 @@ namespace CodingChainApi.Infrastructure
                 .DefaultIndex(elasticSearchSettings.CodeProcessResponseLogIndex);
 
             var client = new ElasticClient(settings);
-               
+
             client.Indices.Create(elasticSearchSettings.CodeProcessResponseLogIndex,
                 index =>
                 {

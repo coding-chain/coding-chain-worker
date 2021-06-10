@@ -35,14 +35,14 @@
 //     public class CsharpProcessServiceTests
 //     {
 //         private CsharpProcessService _processService;
-//         private AppDataSettings _appDataSettings;
+//         private AssetsSettings _AssetsSettings;
 //         private CSharpExecutionSettings _cSharpExecutionSettings;
 //         private CSharpParticipationTestingAggregate _participationTestingAggregate;
 //
 //         [SetUp]
 //         public void Setup()
 //         {
-//             _appDataSettings = new AppDataSettings()
+//             _AssetsSettings = new AssetsSettings()
 //             {
 //                 BasePath = "../../../AppData",
 //                 TemplatesPath = "Templates"
@@ -68,7 +68,7 @@
 //
 //             var factory = serviceProvider.GetService<ILoggerFactory>();
 //             _processService =
-//                 new CsharpProcessService(_appDataSettings, _cSharpExecutionSettings, new FakeLogger(factory));
+//                 new CsharpProcessService(_AssetsSettings, _cSharpExecutionSettings, new FakeLogger(factory));
 //         }
 //
 //         [Test]

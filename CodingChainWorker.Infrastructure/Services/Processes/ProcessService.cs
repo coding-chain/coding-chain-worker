@@ -82,9 +82,18 @@ namespace CodingChainApi.Infrastructure.Services.Processes
                 participation.Id, participation.Language);
         }
 
-
-        protected Task ExecuteParticipation(ParticipationAggregate participation)
+        protected virtual Task PreExecuteParticipation(ParticipationAggregate participation)
         {
+            return Task.CompletedTask;
+        } 
+        protected virtual Task PostExecuteParticipation(ParticipationAggregate participation)
+        {
+            return Task.CompletedTask;
+        } 
+
+        protected async Task ExecuteParticipation(ParticipationAggregate participation)
+        {
+            await PreExecuteParticipation(participation);
             Logger.LogInformation(
                 "Tests execution started for participation : {ParticipationId} on language : {Language} ",
                 participation.Id, participation.Language);
@@ -112,7 +121,7 @@ namespace CodingChainApi.Infrastructure.Services.Processes
             Logger.LogInformation(
                 "Tests execution ended for participation : {ParticipationId} on language : {Language} ",
                 participation.Id, participation.Language);
-            return Task.CompletedTask;
+            await PostExecuteParticipation(participation);
         }
     }
 }
