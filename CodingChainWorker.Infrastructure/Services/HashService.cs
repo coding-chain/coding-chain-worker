@@ -1,14 +1,16 @@
+using System.Runtime.Intrinsics.Arm;
 using System.Security.Cryptography;
 using System.Text;
+using Application.Contracts.IService;
+using Domain.Contracts;
 
-namespace Domain.Common
+namespace CodingChainApi.Infrastructure.Services
 {
-    public static class HashUtils
+    public  class HashService : IHashService
     {
-        public static string GetHash(HashAlgorithm hashAlgorithm, string input)
+        public string GetHash(string text)
         {
-            // Convert the input string to a byte array and compute the hash.
-            byte[] data = hashAlgorithm.ComputeHash(Encoding.UTF8.GetBytes(input));
+            byte[] data = SHA256.Create().ComputeHash(Encoding.UTF8.GetBytes(text));
 
             // Create a new Stringbuilder to collect the bytes
             // and create a string.

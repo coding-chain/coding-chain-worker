@@ -1,8 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
-using System.Text.RegularExpressions;
-using Domain.Common;
+using Domain.Contracts;
 using Domain.Plagiarism.Models;
 
 namespace Domain.Plagiarism
@@ -10,22 +9,28 @@ namespace Domain.Plagiarism
     public class PlagiarismService : ICodePlagiarismService
     {
         private IPlagiarismSettings? _settings;
+        private readonly IHashService _hashService;
 
-        public FunctionAggregate AnalyseCode(FunctionAggregate suspectedFunctionAggregate,
-            IList<FunctionAggregate> functionsToCompare,
-            IPlagiarismSettings settings)
+        public PlagiarismService(IPlagiarismSettings? settings, IHashService hashService)
         {
             _settings = settings;
-            suspectedFunctionAggregate.Code = Regex.Replace(suspectedFunctionAggregate.Code, @"\s+", " ");
+            _hashService = hashService;
+        }
+
+        public FunctionAggregate AnalyseCode(FunctionAggregate suspectedFunctionAggregate,
+            IList<FunctionAggregate> functionsToCompare)
+        {
             foreach (var functionToCompare in functionsToCompare)
             {
                 if (functionToCompare.Id.Equals(suspectedFunctionAggregate.Id)) continue;
 
-                functionToCompare.Code = Regex.Replace(functionToCompare.Code, @"\s+", " ");
                 var averageSimilarity =
                     GetAverageSimilarityRate(suspectedFunctionAggregate.Code, functionToCompare.Code);
-                if (averageSimilarity > settings.Threshold)
-                    suspectedFunctionAggregate.AddSimilarFunction(functionToCompare.Id, averageSimilarity);
+                if (averageSimilarity > _settings.Threshold)
+                    suspectedFunctionAggregate.AddSimilarFunction(
+                        functionToCompare.Id,
+                        functionToCompare.Hash,
+                        averageSimilarity);
             }
 
             return suspectedFunctionAggregate;
@@ -43,7 +48,7 @@ namespace Domain.Plagiarism
         {
             var suspectedList = SampleFingerprints(ExtractFingerprints(suspectedFunctionCode, k), t + 1 - k);
             var comparedList = SampleFingerprints(ExtractFingerprints(comparedFunctionCode, k), t + 1 - k);
-            var rate = (double) GetIntersection(suspectedList, comparedList).Count / comparedList.Count;
+            var rate = (double)GetIntersection(suspectedList, comparedList).Count / comparedList.Count;
             return rate;
         }
 
@@ -79,7 +84,7 @@ namespace Domain.Plagiarism
             for (var i = 0; i < content.Length - k; i++)
             {
                 string kgram = content.Substring(i, k);
-                string hash = HashUtils.GetHash(SHA256.Create(), kgram);
+                string hash = _hashService.GetHash( kgram);
                 fingerprints.Add(hash);
             }
 
@@ -94,6 +99,12 @@ namespace Domain.Plagiarism
                     intersections.Add(element);
 
             return intersections;
+        }
+
+        public FunctionAggregate AnalyseCode(FunctionAggregate suspectedFunctionAggregate, IList<FunctionAggregate> functionsToCompare,
+            IPlagiarismSettings settings)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

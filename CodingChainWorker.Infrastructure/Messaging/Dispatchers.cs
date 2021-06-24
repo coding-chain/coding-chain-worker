@@ -37,7 +37,7 @@ namespace CodingChainApi.Infrastructure.Messaging
                 settings, logger)
         {
             Exchange = settings.PlagiarismExchange;
-            RoutingKey = settings.DoneExecutionRoutingKey;
+            RoutingKey = settings.PlagiarismAnalyzeDoneRoutingKey;
         }
     }
 

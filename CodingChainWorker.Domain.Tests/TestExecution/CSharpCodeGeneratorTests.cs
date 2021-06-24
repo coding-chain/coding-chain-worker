@@ -8,12 +8,41 @@ using NUnit.Framework;
 
 namespace CodingChainWorker.Domain.Tests.TestExecution
 {
+    public record Change(long Bill5, long Bill10, long Coin2);
+
+
     public class CSharpCodeGeneratorTests
     {
         [SetUp]
         public void SetUp()
         {
         }
+
+        [TestCase(6)]
+        [Test]
+        public void TestATM(int s)
+        {
+            var devicesTypes = new List<int>() {2, 5, 10};
+            var devicesCnt = new List<int>() {0, 0, 0};
+            var i = 2;
+            Console.WriteLine(string.Format("{0,22:D8} {0,22:X8}", 1));
+            while (i >= 0 && s > 0)
+            {
+                var testVal = s / devicesTypes[i];
+                if (s % devicesTypes[i] == 0)
+                {
+                    s -= devicesTypes[i];
+                    devicesCnt[i]++;
+                }
+                else
+                {
+                    i--;
+                }
+            }
+
+            Console.WriteLine(devicesCnt);
+        }
+
 
         [Test]
         public void constructor_should_throw_on_function_without_method_name()
