@@ -13,6 +13,7 @@ using CodingChainApi.Infrastructure.Services.Processes;
 using CodingChainApi.Infrastructure.Services.RightElevator;
 using CodingChainApi.Infrastructure.Services.TestsParsers;
 using CodingChainApi.Infrastructure.Settings;
+using Domain.Contracts;
 using Domain.Plagiarism;
 using Domain.TestExecution.Imperative.Typescript;
 using Domain.TestExecution.OOP.CSharp;
@@ -33,6 +34,7 @@ namespace CodingChainApi.Infrastructure
             services.AddScoped<IProcessServiceFactory, ProcessServiceFactory>();
             services.AddScoped<IParticipationAggregateFactory, ParticipationAggregateFactory>();
             services.AddScoped<IDirectoryService, DirectoryService>();
+            services.AddSingleton<IHashService, HashService>();
             services.ConfigureRightElevator(configuration);
             services.ConfigureTestsParsers(configuration);
             services.ConfigureProcessServices(configuration);
