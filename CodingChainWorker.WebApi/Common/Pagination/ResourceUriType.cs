@@ -1,4 +1,4 @@
-﻿namespace NeosCodingApi.Common.Pagination
+﻿namespace CodingChainApi.Common.Pagination
 {
     public enum ResourceUriType
     {
