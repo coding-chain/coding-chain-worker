@@ -100,11 +100,5 @@ namespace Domain.Plagiarism
 
             return intersections;
         }
-
-        public FunctionAggregate AnalyseCode(FunctionAggregate suspectedFunctionAggregate, IList<FunctionAggregate> functionsToCompare,
-            IPlagiarismSettings settings)
-        {
-            throw new System.NotImplementedException();
-        }
     }
 }

@@ -52,11 +52,11 @@ namespace CodingChainWorker.Domain.Tests.TestExecution
         }
 
 
-        [Test]
-        public void get_executable_code_should_works()
-        {
-            var res = _participationAggregate.GetExecutableCode();
-            Assert.IsNotEmpty(res);
-        }
+        // [Test]
+        // public void get_executable_code_should_works()
+        // {
+        //     var res = _participationAggregate.GetExecutableCode();
+        //     Assert.IsNotEmpty(res);
+        // }
     }
 }

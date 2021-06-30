@@ -105,7 +105,8 @@ namespace CodingChainApi.Infrastructure.Services.Processes
                     StandardErrorEncoding = Encoding.UTF8,
                     CreateNoWindow = false,
                     UseShellExecute = false,
-                    Arguments = ProcessArguments
+                    Arguments = ProcessArguments,
+                    WorkingDirectory = TemplateDirectoryPath.FullName
                 },
                 EnableRaisingEvents = true
             };
