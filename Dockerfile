@@ -10,7 +10,7 @@ RUN dotnet publish "CodingChainWorker.WebApi/CodingChainWorker.WebApi.csproj" -c
     && cp init.sh /app/publish
 
 FROM mcr.microsoft.com/dotnet/aspnet:5.0 AS final
-ENV NODE_VERSION=16.3.0 APPLICATION_USER=app_user APPLICATION_GROUP=app_users ASPNETCORE_ENVIRONMENT=Development ASPNETCORE_URLS=https://+:443;http://+:80
+ENV NODE_VERSION=16.3.0 APPLICATION_USER=app_user APPLICATION_GROUP=app_users ASPNETCORE_ENVIRONMENT=Production ASPNETCORE_URLS=http://+:5004
 
 RUN apt-get update -yq \
     && apt-get install curl gnupg acl wget -yq \

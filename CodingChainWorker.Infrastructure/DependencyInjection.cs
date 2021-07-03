@@ -45,7 +45,7 @@ namespace CodingChainApi.Infrastructure
                 configuration);
             ConfigureInjectableSettings<ITemplateSettings, TemplateSettings>(services, configuration);
             ConfigureRabbitMqSettings(services, configuration);
-            ConfigureElasticSearch(services, configuration);
+            //ConfigureElasticSearch(services, configuration); disable it for deployment
             return services;
         }
 
