@@ -30,16 +30,17 @@ namespace CodingChainApi.Infrastructure.Messaging
                     settings.Host, settings.Password, settings.Username, settings.Port);
                 var factory = new ConnectionFactory
                 {
-                    HostName = settings.Host,
-                    Password = settings.Password,
-                    UserName = settings.Username,
-                    Port = settings.Port
+                    HostName = settings.Host
                 };
                 _connection = factory.CreateConnection();
                 _channel = _connection.CreateModel();
             }
             catch (Exception ex)
             {
+                Logger.LogError("{Error}",settings.Host);
+                Logger.LogError("{Error}",settings.Password);
+                Logger.LogError("{Error}",settings.Username);
+                Logger.LogError("{Error}",settings.Port);
                 Logger.LogError("RabbitListener init error,ex:{Error}", ex.Message);
                 throw new InfrastructureException(ex.Message);
             }

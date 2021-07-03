@@ -11,13 +11,13 @@ namespace CodingChainApi.Infrastructure.Messaging
 {
     public class ParticipationDoneResponseService : BaseDispatcherService<CodeProcessResponse>
     {
-        private readonly IElasticClient _client;
+        //private readonly IElasticClient _client;
 
         public ParticipationDoneResponseService(IRabbitMqSettings settings,
-            ILogger<ParticipationDoneResponseService> logger, IElasticClient client) : base(
+            ILogger<ParticipationDoneResponseService> logger/**, IElasticClient client disable for deployment**/) : base(
             settings, logger)
         {
-            _client = client;
+            //_client = client;
             Exchange = settings.ParticipationExchange;
             RoutingKey = settings.DoneExecutionRoutingKey;
         }
@@ -25,8 +25,8 @@ namespace CodingChainApi.Infrastructure.Messaging
         public override async Task Dispatch(CodeProcessResponse message)
         {
             await base.Dispatch(message);
-            await _client.IndexDocumentAsync(new CodeProcessResponseLog(message.ParticipationId, message.Errors,
-                message.Output, message.TestsPassedIds));
+          //  await _client.IndexDocumentAsync(new CodeProcessResponseLog(message.ParticipationId, message.Errors,
+            //    message.Output, message.TestsPassedIds));
         }
     }
 
