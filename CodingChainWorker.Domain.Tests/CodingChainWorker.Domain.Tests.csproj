@@ -14,6 +14,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\CodingChainWorker.Domain\CodingChainWorker.Domain.csproj" />
+      <ProjectReference Include="..\CodingChainWorker.Infrastructure\CodingChainWorker.Infrastructure.csproj" />
     </ItemGroup>
 
 </Project>

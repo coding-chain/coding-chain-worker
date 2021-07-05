@@ -10,8 +10,6 @@
 
     <ItemGroup>
         <Content Remove="nswag.json" />
-        <Content Remove="AppData\Templates\**" />
-        <Content Include="AppData\Templates\csharp_template\csharp_template.csproj" />
     </ItemGroup>
 
     <ItemGroup>
@@ -38,15 +36,19 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Compile Remove="AppData\Templates\**" />
+        <Compile Remove="Templates\**" />
+        <EmbeddedResource Remove="Templates\**" />
+        <None Remove="Templates\**" />
+        <Content Remove="Participations\**" />
+        <Compile Remove="Participations\**" />
+        <EmbeddedResource Remove="Participations\**" />
+        <None Remove="Participations\**" />
     </ItemGroup>
 
     <ItemGroup>
-        <EmbeddedResource Remove="AppData\Templates\**" />
+      <Folder Include="Templates" />
     </ItemGroup>
 
-    <ItemGroup>
-        <Content Remove="AppData\Templates\**" />
-    </ItemGroup>
+
 
 </Project>

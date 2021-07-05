@@ -18,7 +18,15 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="AppData\Templates\csharp_template" />
+      <Compile Remove="AppData\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Remove="AppData\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="AppData\**" />
     </ItemGroup>
 
 </Project>

@@ -1,18 +1,19 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Routing;
 
 namespace CodingChainApi.Helpers
 {
-    public static class HateoasResponseBuilder{
-        public static HateoasResponse<IList<T>> FromPagedList<T>(IUrlHelper urlHelper, PagedListResume page, IList<T> values,
-            string routeName, object? routeValues = null) 
+    public static class HateoasResponseBuilder
+    {
+        public static HateoasResponse<IList<T>> FromPagedList<T>(IUrlHelper urlHelper, PagedListResume page,
+            IList<T> values,
+            string routeName, object? routeValues = null)
         {
             var valuesDic = routeValues == null ? new Dictionary<string, object>() : routeValues.ToDictionary<object>();
             valuesDic["page"] = page.CurrentPage;
             valuesDic["size"] = page.PageSize;
 
-            var links = new List<LinkDto>()
+            var links = new List<LinkDto>
             {
                 LinkDto.CurrentPage(urlHelper.Link(routeName, valuesDic))
             };
@@ -33,6 +34,7 @@ namespace CodingChainApi.Helpers
             return new HateoasResponse<IList<T>>(values, links);
         }
     }
+
     public class HateoasResponse<TResult>
     {
         public HateoasResponse(TResult result, IList<LinkDto> links)
@@ -43,6 +45,5 @@ namespace CodingChainApi.Helpers
 
         public TResult Result { get; set; }
         public IList<LinkDto> Links { get; set; }
-        
     }
 }
