@@ -1,8 +1,9 @@
 using System.Linq;
 using System.Reflection;
 using Application;
-using Application.Contracts.IService;
 using CodingChainApi.Infrastructure;
+using CodingChainApi.Services;
+using CodingChainApi.Services.Messaging;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -13,9 +14,8 @@ using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using CodingChainApi.Controllers;
-using CodingChainApi.Services;
-using CodingChainApi.Services.Code;
+using Microsoft.Extensions.Logging;
+using Nest;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using ZymLabs.NSwag.FluentValidation;
@@ -46,9 +46,12 @@ namespace CodingChainApi
             services.AddApplication();
             services.AddScoped<IPropertyCheckerService, PropertyCheckerService>();
             services.AddHttpContextAccessor();
-            
+
             //RabbitMQ
-            services.AddHostedService<CodeExecutionService>();
+            services.AddHostedService<ParticipationPendingExecutionListenerService>();
+            services.AddHostedService<PrepareParticipationExecutionListenerService>();
+            services.AddHostedService<CleanParticipationExecutionListenerService>();
+            services.AddHostedService<PlagiarismExecutionListenerService>();
             //
 
 
@@ -97,7 +100,6 @@ namespace CodingChainApi
                 services.BuildServiceProvider().GetService<IApiVersionDescriptionProvider>();
 
             foreach (var apiVersionDescription in apiVersionDescriptionProvider.ApiVersionDescriptions)
-            {
                 services.AddSwaggerDocument((settings, serviceProvider) =>
                 {
                     var fluentValidationSchemaProcessor = serviceProvider.GetService<FluentValidationSchemaProcessor>();
@@ -110,7 +112,6 @@ namespace CodingChainApi
                         document.Info.Description = "REST API for example.";
                     };
                 });
-            }
 
             services.AddResponseCompression(opts =>
             {
@@ -120,34 +121,25 @@ namespace CodingChainApi
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env/** ,IElasticClient client, disable it for deployment
+            ILogger<Startup> logger**/)
         {
+            //logger.LogInformation("Elastic search ping result : {PingInfo}", client.Ping().DebugInformation);
             app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 
             app.UseResponseCompression();
             if (env.IsDevelopment())
-            {
                 app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseHttpsRedirection();
-            }
-
 
 
             app.UseRouting();
-
 
 
             app.UseAuthentication();
 
             app.UseAuthorization();
 
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
+            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 
             app.UseOpenApi();
             app.UseSwaggerUi3();

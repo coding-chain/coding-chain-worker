@@ -1,14 +1,14 @@
 namespace CodingChainApi.Infrastructure.Settings
 {
-    public interface IAppDataSettings
+    public interface IAssetsSettings
     {
-        string BasePath { get; set; }
         string TemplatesPath { get; set; }
+        public string ParticipationTemplatesPath { get; set; }
     }
 
-    public class AppDataSettings : IAppDataSettings
+    public class AssetsSettings : IAssetsSettings
     {
-        public string BasePath { get; set; }
         public string TemplatesPath { get; set; }
+        public string ParticipationTemplatesPath { get; set; }
     }
 }

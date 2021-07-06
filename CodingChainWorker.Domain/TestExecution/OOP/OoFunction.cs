@@ -1,15 +1,23 @@
+using Domain.TestExecution.Helpers;
+
 namespace Domain.TestExecution.OOP
 {
-    public record OoFunction : Function
+    public class OoFunction : FunctionBase
     {
-        public OoFunction(string code, int id, string methodName, string className) : base(code, id)
+        public OoFunction(string code, int order, string methodName, string className, FunctionId? id = null)
         {
-            MethodName = methodName;
+            Code = code;
+            Order = order;
+            FunctionName = methodName;
             ClassName = className;
+            Id = id;
         }
 
-        public string MethodName { get; }
         public string ClassName { get; }
-        public string MethodCall(string? parameters = null) => $"{ClassName}.{MethodName}({parameters})";
+
+        public override string FunctionCall(string? parameters = null)
+        {
+            return $"{ClassName}.{FunctionName}({parameters})";
+        }
     }
 }

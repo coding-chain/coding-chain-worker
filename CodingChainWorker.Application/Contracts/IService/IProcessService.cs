@@ -1,12 +1,13 @@
-﻿using Application.Contracts.Processes;
+﻿using System.Threading.Tasks;
 using Domain.TestExecution;
 
 namespace Application.Contracts.IService
 {
-    public interface IProcessService<T> where T:ParticipationTestingAggregate
+    public interface IProcessService
     {
-        public IProcessEndHandler ExecuteParticipation(T participation);
-        public void WriteParticipation(T participation);
-        public IProcessEndHandler WriteAndExecuteParticipation(T participation);
+        public void WriteParticipation(ParticipationAggregate participation);
+        public Task WriteAndExecuteParticipation(ParticipationAggregate participation);
+        public Task PrepareParticipationExecution(ParticipationAggregate participation);
+        public Task CleanParticipationExecution(ParticipationAggregate participation);
     }
 }
