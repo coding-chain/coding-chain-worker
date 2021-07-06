@@ -45,7 +45,7 @@ namespace CodingChainApi.Infrastructure
                 configuration);
             ConfigureInjectableSettings<ITemplateSettings, TemplateSettings>(services, configuration);
             ConfigureRabbitMqSettings(services, configuration);
-            //ConfigureElasticSearch(services, configuration); disable it for deployment
+            ConfigureElasticSearch(services, configuration);
             return services;
         }
 
@@ -59,6 +59,7 @@ namespace CodingChainApi.Infrastructure
                 {
                     return provider.GetRequiredService<WindowsTypescriptProcessService>();
                 }
+
                 return provider.GetRequiredService<UnixTypescriptProcessService>();
             });
             services.AddScoped<ICsharpProcessService, CsharpProcessService>();
@@ -75,10 +76,11 @@ namespace CodingChainApi.Infrastructure
                 {
                     return provider.GetRequiredService<WindowsJestTestsParser>();
                 }
+
                 return provider.GetRequiredService<UnixJestTestsParser>();
             });
         }
-        
+
         private static void ConfigureRightElevator(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddScoped<WindowsRightElevatorService>();
@@ -120,22 +122,29 @@ namespace CodingChainApi.Infrastructure
 
         private static void ConfigureElasticSearch(IServiceCollection services, IConfiguration configuration)
         {
-            var elasticSearchSettings =
-                ConfigureInjectableSettings<IElasticSearchSettings, ElasticSearchSettings>(services, configuration);
-            var settings = new ConnectionSettings(new Uri(elasticSearchSettings.Url))
-                .DefaultIndex(elasticSearchSettings.CodeProcessResponseLogIndex);
+            try
+            {
+                var elasticSearchSettings =
+                    ConfigureInjectableSettings<IElasticSearchSettings, ElasticSearchSettings>(services, configuration);
+                var settings = new ConnectionSettings(new Uri(elasticSearchSettings.Url))
+                    .DefaultIndex(elasticSearchSettings.CodeProcessResponseLogIndex);
 
-            var client = new ElasticClient(settings);
+                var client = new ElasticClient(settings);
 
-            client.Indices.Create(elasticSearchSettings.CodeProcessResponseLogIndex,
-                index =>
-                {
-                    index.Map<CodeProcessResponseLog>(x => x.AutoMap());
-                    index.Settings(descriptor => descriptor.BlocksReadOnlyAllowDelete(false));
-                    return index;
-                }
-            );
-            services.AddSingleton<IElasticClient>(client);
+                client.Indices.Create(elasticSearchSettings.CodeProcessResponseLogIndex,
+                    index =>
+                    {
+                        index.Map<CodeProcessResponseLog>(x => x.AutoMap());
+                        index.Settings(descriptor => descriptor.BlocksReadOnlyAllowDelete(false));
+                        return index;
+                    }
+                );
+                services.AddSingleton<IElasticClient>(client);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
         }
 
         private static void ConfigureRabbitMqSettings(IServiceCollection services,

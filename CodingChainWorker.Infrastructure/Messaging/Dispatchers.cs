@@ -1,9 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Application.Contracts.Processes;
 using Application.ParticipationExecution;
 using Application.PlagiarismAnalyze;
 using CodingChainApi.Infrastructure.Logs;
 using CodingChainApi.Infrastructure.Settings;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Nest;
 
@@ -11,13 +13,13 @@ namespace CodingChainApi.Infrastructure.Messaging
 {
     public class ParticipationDoneResponseService : BaseDispatcherService<CodeProcessResponse>
     {
-        //private readonly IElasticClient _client;
+        private readonly IServiceProvider _serviceProvider;
 
         public ParticipationDoneResponseService(IRabbitMqSettings settings,
-            ILogger<ParticipationDoneResponseService> logger/**, IElasticClient client disable for deployment**/) : base(
+            ILogger<ParticipationDoneResponseService> logger, IServiceProvider serviceProvider) : base(
             settings, logger)
         {
-            //_client = client;
+            _serviceProvider = serviceProvider;
             Exchange = settings.ParticipationExchange;
             RoutingKey = settings.DoneExecutionRoutingKey;
         }
@@ -25,8 +27,16 @@ namespace CodingChainApi.Infrastructure.Messaging
         public override async Task Dispatch(CodeProcessResponse message)
         {
             await base.Dispatch(message);
-          //  await _client.IndexDocumentAsync(new CodeProcessResponseLog(message.ParticipationId, message.Errors,
-            //    message.Output, message.TestsPassedIds));
+            try
+            {
+                var client = _serviceProvider.GetRequiredService<IElasticClient>();
+                await client.IndexDocumentAsync(new CodeProcessResponseLog(message.ParticipationId, message.Errors,
+                    message.Output, message.TestsPassedIds));
+            }
+            catch (Exception e)
+            {
+                Logger.LogError("Cannot send message in ElasticSearch");
+            }
         }
     }
 

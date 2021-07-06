@@ -11,7 +11,7 @@ namespace CodingChainApi.Infrastructure.Messaging
     {
         private readonly IModel? _channel;
 
-        private readonly ILogger _logger;
+        protected readonly ILogger<RabbitMqBasePublisher> Logger;
         protected string? Exchange;
 
         protected string? RoutingKey;
@@ -32,12 +32,12 @@ namespace CodingChainApi.Infrastructure.Messaging
                 logger.LogError(-1, ex, "RabbitMQClient init fail");
             }
 
-            _logger = logger;
+            Logger = logger;
         }
 
         protected void PushMessage(object message)
         {
-            _logger.LogInformation("PushMessage in {Exchange}, routing key:{RoutingKey}", Exchange, RoutingKey);
+            Logger.LogInformation("PushMessage in {Exchange}, routing key:{RoutingKey}", Exchange, RoutingKey);
             _channel.ExchangeDeclare(Exchange, ExchangeType.Topic);
 
             string msgJson = JsonConvert.SerializeObject(message);
